@@ -1,0 +1,121 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.page {
+    width: 100%;
+    margin: 0 auto;
+    background-image: url("../img/background.jpg");
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: Verdana, sans-serif;
+
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+}
+
+.form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+    background-color: white;
+    border-radius: 30px;
+    padding: 20px;
+}
+
+.form__title-logo {
+    margin-right: 10px;
+    max-width: 40px;
+}
+
+.form__title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 10px;
+}
+
+.form__title-title {
+    font-size: 30px;
+    background: linear-gradient(45deg, #033083 33%, #25a8d6 66%, #25a8d6);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+.form__btn {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    height: 60px;
+    border-radius: 30px;
+    font-size: 16px;
+    color: #fff;
+
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.form__btn:last-child {
+    margin-bottom: 0;
+}
+
+.form__btn:hover,
+.form__btn:focus {
+
+    background-color: #333333;
+}
+
+.form__btn-info {
+    background-color: #033083;
+}
+
+.form__btn-tg {
+    background-color:#25a8d6;
+}
+
+
+.form__img {
+    margin-right: 10px;
+    width: 40px;
+}
+
+
+
+@media screen and (max-device-width: 480px) {
+    
+    
+    .form {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .form__btn {
+        padding: 15px;
+        border-radius: 40px;
+        
+        white-space: nowrap;
+        font-size: 4vw;
+    }
+
+    .form__img {
+        max-width: 30px;
+
+    }
+
+    .form__title-logo {
+        width: 100%;
+    }
+}

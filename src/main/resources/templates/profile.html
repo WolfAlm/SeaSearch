@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../img/icon.ico" type="image/png">
+  <link rel="stylesheet" href="../style/profile.css"/>
+  <script type="text/javascript" src="https://yastatic.net/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="../js/profile.js"></script>
+  <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
+  <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
+  <title>SeaSearch. Профиль</title>
+</head>
+
+<body class="page">
+<header class="header">
+  <div class="header__left">
+    <img class="logo" src="../img/icon.ico" width="50px" height="50px" alt="Логотип сайта" />
+    <h1 class="title">SeaSearch</h1>
+  </div>
+
+  <div class="header__right">
+    <img class="header__photo" th:src="${me.photoPath}" src="./img/icon.ico" alt="Профильное фото" />
+
+    <a class="button" th:href="@{/exit}">Выход</a>
+  </div>
+</header>
+
+<main class="info information">
+  <section class="profile" th:object="${profileStats}">
+    <div class="profile__info">
+      <img class="profile__photo" src="./img/background.png" th:src="*{photoPath}">
+
+      <h1 class="profile__info_fio" th:text="*{name}">Фамилия Имя Отечество</h1>
+      <h2 class="profile__info_nickname" th:text="*{nickname}">Никнейм</h2>
+
+    </div>
+    <div class="profile__stats process-parse">
+      <ul class="stats__list">
+        <li>Идет процесс парсинга... Напоминаю, можно не более 100 сообщений в секунду. Можно идти
+          пить чай :)
+        </li>
+        <li>Получено сообщений: <span class="stats__list-span"
+                                      th:text="${countMessage}"> 123123123</span>
+        </li>
+        <li>Дата последнего сообщения: <span class="stats__list-span" th:text="${date}"> 16</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+<script src="//cdn.amcharts.com/lib/4/core.js"></script>
+<script src="//cdn.amcharts.com/lib/4/charts.js"></script>
+</body>
+
+</html>

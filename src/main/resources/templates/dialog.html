@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="./img/icon.ico" type="image/png">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./style/dialog.css">
+  <title>SeaSearch. Диалоги</title>
+</head>
+
+<body class="page">
+<header class="header">
+  <div class="header__left">
+    <img class="logo" src="./img/icon.ico"/>
+    <h1 class="title">SeaSearch</h1>
+  </div>
+
+  <div class="header__right">
+    <img class="header__photo" th:src="${me.photoPath}"/>
+    <a class="button" th:href="@{/exit}">Выход</a>
+  </div>
+</header>
+
+<div class="search">
+  <form class="search__form" th:action="@{/dialogs}" method="post">
+    <input class="search__input" type="text" placeholder="Поиск по диалогам..." th:value="${search}"
+           name="search">
+    <button class="search__submit" type="submit"></button>
+  </form>
+</div>
+
+
+<main class="main">
+  <div class="table" th:object="${dialog}">
+    <input class="table__input" type="radio" name="inset" value="" id="tab_1" checked>
+    <label class="table__label" for="tab_1">Все диалоги</label>
+
+    <input class="table__input" type="radio" name="inset" value="" id="tab_2">
+    <label class="table__label" for="tab_2">Личные</label>
+
+    <input class="table__input" type="radio" name="inset" value="" id="tab_3">
+    <label class="table__label" for="tab_3">Групповые</label>
+
+    <!-- Таблица -->
+
+    <table class="table__table" id="txt_1">
+      <thead class="thead">
+      <tr>
+        <th class="column">Фото</th>
+        <th class="column">Название диалога</th>
+        <th class="column">Позиция</th>
+      </tr>
+      </thead>
+      <tbody class="tbody">
+      <tr class="chat" th:each="chat, iterStat : *{orderChats}" th:onclick="">
+        <td><img class="chat__photo" th:src="${dialog.profileStats.get(chat.value.id).photoPath}">
+        </td>
+        <td><a class="chat__a height" th:href="@{/profile/{id}(id=${chat.value.id})}"
+               th:text="${chat.value.title}"></a>
+        </td>
+        <td><a class="height" th:href="@{/profile/{id}(id=${chat.value.id})}"
+               th:text="${iterStat.count}"></a></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <table class="table__table" id="txt_2">
+      <thead class="thead">
+      <tr>
+        <th class="column">Фото</th>
+        <th class="column">Название диалога</th>
+        <th class="column">Позиция</th>
+      </tr>
+      </thead>
+      <tbody class="tbody">
+      <tr th:each="chat, iterStat : *{privateChats}">
+        <td><img class="chat__photo" th:src="${dialog.profileStats.get(chat.value.id).photoPath}">
+        </td>
+        <td><a class="chat__a height" th:href="@{/profile/{id}(id=${chat.value.id})}"
+               th:text="${chat.value.title}"></a>
+        </td>
+        <td><a class="height" th:href="@{/profile/{id}(id=${chat.value.id})}"
+               th:text="${iterStat.count}"></a></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <table class="table__table" id="txt_3">
+      <thead class="thead">
+      <tr>
+        <th class="column">Фото</th>
+        <th class="column">Название диалога</th>
+        <th class="column">Позиция</th>
+      </tr>
+      </thead>
+      <tbody class="tbody">
+      <tr th:each="chat, iterStat : *{groupChats}">
+        <td><img class="chat__photo height"
+                 th:src="${dialog.profileStats.get(chat.value.id).photoPath}"></td>
+        <td><a class="chat__a height" th:href="@{/profile/{id}(id=${chat.value.id})}"
+               th:text="${chat.value.title}"></a>
+        </td>
+        <td><a class="height" th:href="@{/profile/{id}(id=${chat.value.id})}"
+               th:text="${iterStat.count}"></a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+</body>
+
+</html>
