@@ -26,7 +26,7 @@
     left: 50%;
     -webkit-transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
-        transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
     background-color: white;
     border-radius: 30px;
     padding: 20px;
@@ -48,7 +48,7 @@
     font-size: 30px;
     background: linear-gradient(45deg, #033083 33%, #25a8d6 66%, #25a8d6);
     -webkit-background-clip: text;
-            background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -95,8 +95,8 @@
 
 
 @media screen and (max-device-width: 480px) {
-    
-    
+
+
     .form {
         max-width: 90%;
         padding: 20px;
@@ -105,7 +105,7 @@
     .form__btn {
         padding: 15px;
         border-radius: 40px;
-        
+
         white-space: nowrap;
         font-size: 4vw;
     }

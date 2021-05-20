@@ -55,12 +55,13 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
+}
 
-
+.button__exit {
+  max-height: 25px;
 }
 
 .button {
-  max-height: 25px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -81,7 +82,7 @@
 /* info */
 
 .info {
-  max-width: 950px;
+  max-width: 700px;
   margin: 40px auto;
   background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
@@ -206,4 +207,56 @@
   margin: 0 auto;
   max-width: 1200px;
   height: 500px
+}
+
+
+@media screen and (max-device-width: 480px) {
+  .title {
+    font-size: 30px;
+  }
+
+
+  .header__left {
+    margin-left: 20px;
+  }
+
+  .profile__info_nickname {
+    font-size: 20px;
+  }
+
+  .profile__info {
+    margin-right: 10px;
+  }
+
+  .profile__info_fio {
+    font-size: 15px;
+  }
+  .column {
+    text-overflow: ellipsis;
+    max-width: 80px;
+  }
+
+
+  .column,
+  .cell {
+    padding: 5px;
+    font-size: 15px;
+  }
+
+  .info {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .stats__list_li {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .button__dwnld {
+    width: 110px;
+    font-size: 15px;
+    padding: 2px 4px;
+    height: 40px;
+  }
 }
