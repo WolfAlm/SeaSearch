@@ -107,7 +107,6 @@ public class ParserDialog implements Runnable {
           if (((TdApi.Chats) object).chatIds.length == 0) {
             synchronized (positionDialogs) {
               processParse = false;
-              System.out.println("Освободил");
               semaphore.release();
             }
           }

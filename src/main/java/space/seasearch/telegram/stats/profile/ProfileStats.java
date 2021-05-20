@@ -124,6 +124,7 @@ public class ProfileStats {
   public void restartMessage() {
     message.setStartParse(false);
     parseMessage();
+    infoStats.setUpdated(false);
   }
 
   /**

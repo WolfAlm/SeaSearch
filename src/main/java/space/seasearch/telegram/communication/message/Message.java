@@ -86,6 +86,8 @@ public class Message {
     if (!startParse) {
       startParse = true;
       if (positionMessages.size() == 0) {
+        haveFullMessages = false;
+        countMessage = 0;
         parseMessage();
       }
     }
