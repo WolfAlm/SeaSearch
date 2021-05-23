@@ -5,7 +5,6 @@ import it.tdlight.jni.TdApi;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -28,7 +27,7 @@ public class ProfileStats {
   private String name;
   private String nickname;
   private String photoPath;
-  private final InfoStats infoStats = new InfoStats();
+  private InfoStats infoStats = new InfoStats();
   private final TelegramClient client;
   private Message message;
 
@@ -39,8 +38,6 @@ public class ProfileStats {
   public void updateInfo() {
     if (!infoStats.isUpdated()) {
       infoStats.setUpdated(true);
-      infoStats.setDictionaryWords(new HashMap<>());
-      message.makeMessage(infoStats);
 
       infoStats.setAllWord(infoStats.getIncomingWord() + infoStats.getOutgoingWord());
       infoStats.setAllSymbol(infoStats.getIncomingSymbol() + infoStats.getOutgoingSymbol());
@@ -51,19 +48,14 @@ public class ProfileStats {
       infoStats.setAllVideo(infoStats.getIncomingVideo() + infoStats.getOutgoingVideo());
       infoStats.setAllDocument(infoStats.getIncomingDocument() + infoStats.getOutgoingDocument());
       infoStats.setAllForward(infoStats.getIncomingForward() + infoStats.getOutgoingForward());
+      infoStats.setAllMessage(infoStats.getOutgoingMessage() + infoStats.getIncomingMessage());
 
-      infoStats.setAllMessage(message.getIncomingMessages().size() +
-          message.getOutgoingMessages().size());
-      infoStats.setIncomingMessage(message.getIncomingMessages().size());
-      infoStats.setOutgoingMessage(message.getOutgoingMessages().size());
       // Сообщения по дням.
-      Map<LocalDate, Long> messagesOfDay = message.getMessages().parallelStream()
-          .collect(Collectors.groupingBy(e -> (new Date(e.date * 1000L).toInstant().atZone(
-              ZoneId.of("GMT+3")).toLocalDate()), Collectors.counting()));
+      Map<LocalDate, Integer> messagesOfDay = message.getMessagesOfDay();
 
       infoStats.setMessagesAllOfDay(createMessagesPerDay(messagesOfDay));
-      infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getIncomingMessages()));
-      infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getOutgoingMessages()));
+      infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
+      infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
 
       // Среднее количество сообщений в день.
       LongSummaryStatistics statistics =
@@ -77,7 +69,7 @@ public class ProfileStats {
       infoStats.setCountMaxMessage((int) statistics.getMax());
 
       // Первое сообщение.
-      TdApi.Message firstMessage = message.getMessages().get(getMessage().getMessages().size() - 1);
+      TdApi.Message firstMessage = message.getLastMessage();
       infoStats.setDateFirstMessage(dateFormat.format(new Date(firstMessage.date * 1000L)));
 
       // Слова
@@ -90,19 +82,13 @@ public class ProfileStats {
               (oldValue, newValue) -> oldValue, LinkedHashMap::new)));
 
       // Очистим все данные.
-      message.setMessages(new ArrayList<>());
-      message.setIncomingMessages(new ArrayList<>());
-      message.setOutgoingMessages(new ArrayList<>());
+      message.setMessagesOfDay(new HashMap<>());
+      message.setMessagesIncomingOfDay(new HashMap<>());
+      message.setMessagesOutgoingOfDay(new HashMap<>());
     }
   }
 
-  private List<MessagesPerDay> createMessagesPerDay(List<TdApi.Message> messageList) {
-    return createMessagesPerDay(messageList.parallelStream()
-        .collect(Collectors.groupingBy(e -> (new Date(e.date * 1000L).toInstant().atZone(
-            ZoneId.of("GMT+3")).toLocalDate()), Collectors.counting())));
-  }
-
-  private List<MessagesPerDay> createMessagesPerDay(Map<LocalDate, Long> messageDictionary) {
+  private List<MessagesPerDay> createMessagesPerDay(Map<LocalDate, Integer> messageDictionary) {
     List<MessagesPerDay> messagesPerDay = new ArrayList<>();
 
     for (var a : messageDictionary.entrySet()) {
@@ -118,13 +104,14 @@ public class ProfileStats {
    * Запускает процесс парсинга сообщений.
    */
   public void parseMessage() {
+    message.setStats(infoStats);
     message.startParseMessage();
   }
 
   public void restartMessage() {
+    infoStats = new InfoStats();
     message.setStartParse(false);
     parseMessage();
-    infoStats.setUpdated(false);
   }
 
   /**
@@ -142,7 +129,7 @@ public class ProfileStats {
    * @return Количество полученных сообщений.
    */
   public int getCountAllMessage() {
-    return message.getCountMessage();
+    return infoStats.getIncomingMessage() + infoStats.getOutgoingMessage();
   }
 
   /**
@@ -152,6 +139,10 @@ public class ProfileStats {
    * @return Дата последнего сообщения в строковом представлении.
    */
   public String getDateLastMessage() {
-    return dateFormat.format(new Date(message.getLastMessage().date * 1000L));
+    if (message.getLastMessage() != null) {
+      return dateFormat.format(new Date(message.getLastMessage().date * 1000L));
+    } else {
+      return dateFormat.format(LocalDate.of(1970, 1, 1));
+    }
   }
 }

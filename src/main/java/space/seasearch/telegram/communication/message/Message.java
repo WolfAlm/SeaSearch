@@ -4,7 +4,6 @@ import it.tdlight.common.ResultHandler;
 import it.tdlight.common.TelegramClient;
 import it.tdlight.jni.TdApi;
 import it.tdlight.jni.TdApi.GetChatHistory;
-import it.tdlight.jni.TdApi.MessageAudio;
 import it.tdlight.jni.TdApi.MessageDocument;
 import it.tdlight.jni.TdApi.MessagePhoto;
 import it.tdlight.jni.TdApi.MessageSticker;
@@ -12,40 +11,28 @@ import it.tdlight.jni.TdApi.MessageText;
 import it.tdlight.jni.TdApi.MessageVideo;
 import it.tdlight.jni.TdApi.MessageVoiceNote;
 import it.tdlight.jni.TdApi.Messages;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableSet;
-import java.util.TreeSet;
 import lombok.Getter;
 import lombok.Setter;
 import space.seasearch.telegram.stats.info.InfoStats;
 
 public class Message {
 
-  /**
-   * Позиции сообщений в порядке возрастания.
-   */
-  private NavigableSet<PositionMessage> positionMessages;
-  /**
-   * Список исходящих сообщений.
-   */
   @Setter
+  private InfoStats stats;
   @Getter
-  private List<TdApi.Message> outgoingMessages = new ArrayList<>();
-
-  /**
-   * Список входящих сообщений.
-   */
   @Setter
+  private Map<LocalDate, Integer> messagesOfDay = new HashMap<>();
   @Getter
-  private List<TdApi.Message> incomingMessages = new ArrayList<>();
-  /**
-   * Список смешанных сообщений.
-   */
   @Setter
+  private Map<LocalDate, Integer> messagesIncomingOfDay = new HashMap<>();
   @Getter
-  private List<TdApi.Message> messages = new ArrayList<>();
+  @Setter
+  private Map<LocalDate, Integer> messagesOutgoingOfDay = new HashMap<>();
   private final TelegramClient client;
   /**
    * ID счата, с которого были и получены сообщения.
@@ -62,11 +49,7 @@ public class Message {
    */
   @Setter
   private boolean startParse;
-  /**
-   * Сколько всего сообщений уже было получено.
-   */
-  @Getter
-  private int countMessage;
+
   /**
    * Последнее сообщение, которое было получено.
    */
@@ -76,7 +59,6 @@ public class Message {
   public Message(TelegramClient client, Long idChat) {
     this.idChat = idChat;
     this.client = client;
-    positionMessages = new TreeSet<>();
   }
 
   /**
@@ -85,39 +67,10 @@ public class Message {
   public void startParseMessage() {
     if (!startParse) {
       startParse = true;
-      if (positionMessages.size() == 0) {
-        haveFullMessages = false;
-        countMessage = 0;
-        parseMessage();
-      }
+      haveFullMessages = false;
+      lastMessage = null;
+      parseMessage();
     }
-  }
-
-  /**
-   * Добавляет сообщения по типам сообщений, определяет содержание, после чего позиционные сообщения
-   * сбрасываются.
-   *
-   * @param infoStats Профильная информация про его сообщения.
-   */
-  public void makeMessage(InfoStats infoStats) {
-    if (positionMessages == null) {
-      return;
-    }
-
-    for (PositionMessage positionMessage : positionMessages) {
-      TdApi.Message message = positionMessage.getMessage();
-      messages.add(message);
-
-      if (message.isOutgoing) {
-        outgoingMessages.add(message);
-      } else {
-        incomingMessages.add(message);
-      }
-
-      checkTypeMessage(message, infoStats);
-    }
-
-    positionMessages = new TreeSet<>();
   }
 
   /**
@@ -125,9 +78,21 @@ public class Message {
    * если сообщение является репостом, то просто засчитываем количество репостов и возвращаемся.
    *
    * @param message Сообщение, у которого нужно проверить.
-   * @param stats   Профильная информация, куда нужно заносить данные.
    */
-  private void checkTypeMessage(TdApi.Message message, InfoStats stats) {
+  private void checkTypeMessage(TdApi.Message message) {
+    messagesOfDay.merge(new Date(message.date * 1000L).toInstant().atZone(
+        ZoneId.of("GMT+3")).toLocalDate(), 1,  Integer::sum);
+
+    if (message.isOutgoing) {
+      messagesOutgoingOfDay.merge(new Date(message.date * 1000L).toInstant().atZone(
+          ZoneId.of("GMT+3")).toLocalDate(), 1,  Integer::sum);
+      stats.setOutgoingMessage(stats.getOutgoingMessage() + 1);
+    } else {
+      messagesIncomingOfDay.merge(new Date(message.date * 1000L).toInstant().atZone(
+          ZoneId.of("GMT+3")).toLocalDate(), 1,  Integer::sum);
+      stats.setIncomingMessage(stats.getIncomingMessage() + 1);
+    }
+
     // Проверка на репост.
     if (message.forwardInfo != null) {
       if (message.isOutgoing) {
@@ -138,6 +103,7 @@ public class Message {
 
       return;
     }
+
     // Проверка на тип сообщения и в зависимости от типа сообщения - входящего или исходящего
     // прибавляем в количестве на единичку.
     switch (message.content.getConstructor()) {
@@ -173,7 +139,8 @@ public class Message {
         // Считаем количество символов.
         long symbol = ((MessageText) message.content).text.text.length();
         // Получаем список слов по разделителям.
-        String[] words = ((MessageText) message.content).text.text.split("[,;:\\[\\]()+.\\\\!?\\s]+");
+        String[] words = ((MessageText) message.content).text.text
+            .split("[,;:\\[\\]()+.\\\\!?\\s]+");
         // Заносим слова в словарь.
         Map<String, Integer> wordsDictionary = stats.getDictionaryWords();
         // Считаем количество слов.
@@ -210,19 +177,17 @@ public class Message {
    * Отправляет запрос на получение новых сообщений, если были получены не все сообщения.
    */
   private void parseMessage() {
-    synchronized (positionMessages) {
-      if (!haveFullMessages) {
-        // Получаем идентификатор последнего сообщения, от которого нужно получать
-        // более старые сообщения.
-        long fromMessageId = 0;
+    if (!haveFullMessages) {
+      // Получаем идентификатор последнего сообщения, от которого нужно получать
+      // более старые сообщения.
+      long fromMessageId = 0;
 
-        if (!positionMessages.isEmpty()) {
-          fromMessageId = positionMessages.last().getMessageID();
-        }
-
-        client.send(new GetChatHistory(idChat, fromMessageId, 0, 99, false),
-            new MessageHandler());
+      if (lastMessage != null) {
+        fromMessageId = lastMessage.id;
       }
+
+      client.send(new GetChatHistory(idChat, fromMessageId, 0, 99, false),
+          new MessageHandler());
     }
   }
 
@@ -238,18 +203,13 @@ public class Message {
       if (object.getConstructor() == Messages.CONSTRUCTOR) {
         TdApi.Message[] messagesId = ((Messages) object).messages;
 
-        synchronized (positionMessages) {
-          int size = positionMessages.size();
+        if (messagesId.length == 0) {
+          haveFullMessages = true;
+        } else {
+          lastMessage = messagesId[messagesId.length - 1];
 
-          for (var a : messagesId) {
-            positionMessages.add(new PositionMessage(a.id, a));
-          }
-
-          countMessage = positionMessages.size();
-          lastMessage = positionMessages.last().getMessage();
-
-          if (size == countMessage) {
-            haveFullMessages = true;
+          for (var message : messagesId) {
+            checkTypeMessage(message);
           }
         }
 

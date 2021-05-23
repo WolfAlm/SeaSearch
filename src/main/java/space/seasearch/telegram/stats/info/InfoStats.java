@@ -3,6 +3,7 @@ package space.seasearch.telegram.stats.info;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
@@ -13,9 +14,9 @@ public class InfoStats {
 
   private static ObjectMapper mapper = new ObjectMapper();
   private boolean isUpdated;
-  private long allMessage;
-  private long outgoingMessage;
-  private long incomingMessage;
+  private int allMessage;
+  private int outgoingMessage;
+  private int incomingMessage;
   private long allWord;
   private long outgoingWord;
   private long incomingWord;
@@ -50,7 +51,7 @@ public class InfoStats {
   private int countMaxMessage;
   private String dateFirstMessage;
   private int countAverageMessage;
-  private Map<String, Integer> dictionaryWords;
+  private Map<String, Integer> dictionaryWords = new HashMap<>();
   private List<List<Object>> words;
   /**
    * Список с информацией о количестве смешанных сообщений в общительные дни.
@@ -93,7 +94,7 @@ public class InfoStats {
 
       int step = 0;
       for (var a : dictionaryWords.entrySet()) {
-        if (!UtilMessage.EXTRA_WORDS.contains(a.getKey())) {
+        if (a.getKey().length() > 1 && !UtilMessage.EXTRA_WORDS.contains(a.getKey())) {
           List<Object> b = List.of(a.getKey(), a.getValue());
           words.add(b);
 

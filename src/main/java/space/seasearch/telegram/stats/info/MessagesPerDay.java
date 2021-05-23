@@ -20,5 +20,5 @@ public class MessagesPerDay {
   /**
    * Количество сообщений.
    */
-  private Long value;
+  private Integer value;
 }
