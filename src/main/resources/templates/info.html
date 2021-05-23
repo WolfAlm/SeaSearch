@@ -1,45 +1,52 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style/index.css">
-  <link rel="icon" href="img/icon.ico" type="image/png">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style/info.css" />
+  <link rel="icon" href="../static/img/icon.ico" type="image/png" />
   <title>SeaSearch</title>
 </head>
 
-<body>
+<body class="page">
 <section class="form">
   <a href="/">
     <div class="form__title">
-      <img class="form__img form__title-logo" src="img/icon.ico" />
-      <h1 class="form__title-title">
-        SeaSearch
-      </h1>
+      <img class="form__img form__title-logo" src="./img/icon.ico" />
+      <h1 class="form__title-title">SeaSearch</h1>
     </div>
   </a>
-
-  <p>
-    Авторизация в сервисе происходит с помощью вашего telegram-аккаунта. Регистрируясь, вы автоматически предоставляете доступ к вашим личным сообщениям, давая тем самым сервису возможность их анализировать. Полученные данные необходимы для корректной работы системы.
-
-    Ваши личные сообщения не будут храниться нигде, кроме внутренней памяти веб-приложения, а после завершения анализа автоматически удалятся.
-
-    Здесь вы можете увидеть:
-
-    1.  Облако самых популярных слов
-    2.  График, отражающий количество сообщений по дням.
-    3.  Статистику входящих и исходящих сообщений.
-
-    ВАЖНО! Telegram-сервер позволяет получать только 100 сообщений в секунду, поэтому процесс может быть долгим. Вы можете запустить процесс и заглянуть за результатом уже на следующий день.
-  </p>
-
-  <a class="form__btn form__btn-info" href="/">
-    <img class="form__img" src="./img/ico/info.ico"/>
-    Назад
-  </a>
+  <div class="text">
+    <p class="text__text">
+      Авторизация в сервисе происходит с помощью вашего telegram-аккаунта.
+      Регистрируясь, вы автоматически предоставляете доступ к вашим личным
+      сообщениям, давая тем самым сервису возможность их анализировать.
+      Полученные данные необходимы для корректной работы системы. Ваши личные
+      сообщения не будут храниться нигде, мы получаем до 100 сообщений в
+      секунду, сразу обрабатываем, удаляем старые и переходим к новым.
+    </p>
+    <p class="text__text">
+      Здесь вы можете увидеть:
+    </p>
+    <ul class="text__text">
+      <li class="li"> 1. Облако самых популярных слов </li>
+      <li class="li">2. График, отражающий
+        количество сообщений по дням. </li>
+      <li class="li">3. Статистику входящих и исходящих
+        сообщений. </li>
+    </ul>
+    <p class="text__text">
+      <span class="text__span">ВАЖНО!</span> Telegram-сервер позволяет получать только 100
+      сообщений в секунду, поэтому процесс может быть долгим. Вы можете
+      запустить процесс и заглянуть за результатом уже на следующий день.
+    </p>
+  </div>
+  <div class="button__div">
+    <a class="button" href="/">
+      Назад
+    </a>
+  </div>
 </section>
 </body>
-
 </html>

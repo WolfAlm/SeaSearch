@@ -27,14 +27,17 @@
     -webkit-transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
-    background-color: white;
+    background: #fff;
     border-radius: 30px;
     padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 300px;
 }
 
 .form__title-logo {
     margin-right: 10px;
     max-width: 40px;
+
 }
 
 .form__title {
@@ -42,6 +45,7 @@
     justify-content: center;
     align-items: center;
     margin: 0 auto 10px;
+
 }
 
 .form__title-title {
@@ -72,10 +76,16 @@
     margin-bottom: 0;
 }
 
-.form__btn:hover,
-.form__btn:focus {
+.form__btn-tg:hover,
+.form__btn-tg:focus {
 
-    background-color: #333333;
+    background: linear-gradient(45deg, #033083 33%, #0078ac 66%, #25a8d6);
+}
+
+.form__btn-info:hover,
+.form__btn-info:focus {
+
+    background: linear-gradient(45deg, #25a8d6 33%, #0078ac 66%, #033083);
 }
 
 .form__btn-info {
