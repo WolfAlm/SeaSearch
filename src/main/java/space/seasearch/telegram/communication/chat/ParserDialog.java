@@ -20,12 +20,6 @@ public class ParserDialog implements Runnable {
   private final TelegramClient client;
 
   /**
-   * Указатель на состояние, что идет ли процесс получения диалогов в данный момент.
-   */
-  @Getter
-  private boolean processParse = true;
-
-  /**
    * Список чатов. (ID чата, сам чат)
    */
   @Getter
@@ -75,26 +69,9 @@ public class ParserDialog implements Runnable {
   /**
    * Запрашивает диалоги у сервера и вытягивает всех их.
    */
-  public void parseChats() {
-    synchronized (positionDialogs) {
-      if (processParse) {
-        long offsetOrder = Long.MAX_VALUE;
-        long offsetChatId = 0;
-
-        if (!positionDialogs.isEmpty()) {
-          offsetOrder = positionDialogs.last().getOrder();
-          offsetChatId = positionDialogs.last().getChatId();
-        }
-
-        client.send(new TdApi.GetChats(new TdApi.ChatListMain(), offsetOrder, offsetChatId,
-            30000), new ChatHandler());
-      }
-    }
-  }
-
   @Override
   public void run() {
-    parseChats();
+    client.send(new TdApi.GetChats(new TdApi.ChatListMain(), 30000), new ChatHandler());
   }
 
   private class ChatHandler implements ResultHandler {
@@ -103,15 +80,7 @@ public class ParserDialog implements Runnable {
     public void onResult(TdApi.Object object) {
       switch (object.getConstructor()) {
         case TdApi.Chats.CONSTRUCTOR:
-          // Если чатов больше нет в приходящем запросе, то мы перестаем парсить.
-          if (((TdApi.Chats) object).chatIds.length == 0) {
-            synchronized (positionDialogs) {
-              processParse = false;
-              semaphore.release();
-            }
-          }
-
-          parseChats();
+          semaphore.release();
           break;
         case TdApi.Error.CONSTRUCTOR:
           System.err.println("Receive an error for GetChats: " + ((Error) object).message);

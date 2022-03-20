@@ -33,7 +33,7 @@ public class UserStats extends ProfileStats {
    *
    * @param userId Идентификатор пользователя, которого нужно получить.
    */
-  public void parseUser(int userId) {
+  public void parseUser(long userId) {
     getClient().send(new TdApi.GetUser(userId), new UserHandler());
   }
 

@@ -20,7 +20,7 @@ public class GroupStats extends ProfileStats {
    *
    * @param groupID Идентификатор группы.
    */
-  public void parseGroup(int groupID) {
+  public void parseGroup(long groupID) {
     getClient().send(new TdApi.GetBasicGroupFullInfo(groupID), new GroupHandler());
   }
 

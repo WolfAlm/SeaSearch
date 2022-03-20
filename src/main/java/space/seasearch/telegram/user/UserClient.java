@@ -139,7 +139,7 @@ public class UserClient {
           break;
         // Добавляет новые чаты.
         case TdApi.UpdateNewChat.CONSTRUCTOR:
-          if (dialog.getParserDialog() != null && dialog.getParserDialog().isProcessParse()) {
+          if (dialog.getParserDialog() != null) {
             TdApi.UpdateNewChat updateNewChat = (TdApi.UpdateNewChat) object;
             TdApi.Chat chat = updateNewChat.chat;
             dialog.getParserDialog().addChat(chat);
@@ -147,7 +147,7 @@ public class UserClient {
           break;
         // Получает позиции для этих чатов.
         case TdApi.UpdateChatPosition.CONSTRUCTOR:
-          if (dialog.getParserDialog() != null && dialog.getParserDialog().isProcessParse()) {
+          if (dialog.getParserDialog() != null) {
             dialog.getParserDialog().addPosition((TdApi.UpdateChatPosition) object);
           }
           break;
