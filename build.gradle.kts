@@ -17,6 +17,10 @@ plugins {
 
     val springBootVersion = "2.4.5"
     id("org.springframework.boot") version springBootVersion
+
+    // READ https://github.com/node-gradle/gradle-node-plugin/blob/master/docs/usage.md
+    // for how to execute npm commands properly
+    id ("com.github.node-gradle.node") version "3.2.1"
 }
 
 repositories {
@@ -82,15 +86,27 @@ publishing {
     }
 }
 
-tasks.withType<JavaCompile>() {
-    options.encoding = "UTF-8"
+node {
+    download.set(true)
+    version.set("16.14.0")
+    nodeProjectDir.set(file("${project.projectDir}/src/main/js"))
 }
 
-//tasks.named("build") {
-//    finalizedBy("")
-//}
-//
-//tasks.register<Copy>("CopyJsBundle") {
-//    print("Copying JS artifacts...")
-//    from(layout.)
-//}
+tasks {
+    register<Copy>("cpVueToBootApp") {
+        from("src/main/js/dist")
+        destinationDir = file("src/main/resources/vue")
+    }
+
+    withType<JavaCompile>() {
+        options.encoding = "UTF-8"
+    }
+
+    build {
+        finalizedBy("npm_run_build")
+    }
+
+    named("npm_run_build") {
+        finalizedBy("cpVueToBootApp")
+    }
+}

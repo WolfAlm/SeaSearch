@@ -29,3 +29,6 @@ build
 # The project uses native dependencies, so ignore those too, for a good measure
 *.so
 *.dll
+
+# vue build-time artifacts
+src/main/resources/vue/
