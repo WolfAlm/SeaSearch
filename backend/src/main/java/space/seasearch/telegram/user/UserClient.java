@@ -8,7 +8,6 @@ import it.tdlight.tdlight.ClientManager;
 import java.util.concurrent.CountDownLatch;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import space.seasearch.telegram.communication.chat.Dialog;
 
 @Data

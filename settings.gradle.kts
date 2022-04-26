@@ -3,3 +3,4 @@
  */
 
 rootProject.name = "SeaSearch"
+include("backend")

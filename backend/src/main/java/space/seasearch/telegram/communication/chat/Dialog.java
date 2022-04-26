@@ -1,19 +1,15 @@
 package space.seasearch.telegram.communication.chat;
 
-import it.tdlight.common.ResultHandler;
 import it.tdlight.common.TelegramClient;
 import it.tdlight.jni.TdApi;
 import it.tdlight.jni.TdApi.Chat;
 import it.tdlight.jni.TdApi.ChatTypeBasicGroup;
 import it.tdlight.jni.TdApi.ChatTypePrivate;
-import it.tdlight.jni.TdApi.Error;
-import it.tdlight.jni.TdApi.UpdateChatPosition;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
