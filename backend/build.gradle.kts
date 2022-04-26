@@ -85,3 +85,12 @@ publishing {
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
+
+//tasks.named("build") {
+//    finalizedBy("")
+//}
+//
+//tasks.register<Copy>("CopyJsBundle") {
+//    print("Copying JS artifacts...")
+//    from(layout.)
+//}
