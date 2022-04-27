@@ -32,3 +32,6 @@ build
 
 # vue build-time artifacts
 src/main/resources/vue/
+
+.cache
+database

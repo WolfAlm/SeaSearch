@@ -7,6 +7,7 @@ import it.tdlight.jni.TdApi.Chat;
 import it.tdlight.jni.TdApi.DownloadFile;
 import it.tdlight.jni.TdApi.File;
 import it.tdlight.jni.TdApi.User;
+import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class Photo {
    */
   public String parsePath(Chat chat) {
     if (chat.photo != null) {
-      String[] folders = chat.photo.small.local.path.split(java.io.File.separator);
+      String[] folders = chat.photo.small.local.path.split(Pattern.quote(java.io.File.separator));
 
       return PhotoPath.PATH_TO_DATABASE + folders[folders.length - 3]
           + PhotoPath.PATH_TO_DOWNLOAD_PHOTO +
@@ -48,7 +49,7 @@ public class Photo {
    */
   public String parsePath(User user) {
     if (user.profilePhoto != null) {
-      String[] folders = user.profilePhoto.small.local.path.split(java.io.File.separator);
+      String[] folders = user.profilePhoto.small.local.path.split(Pattern.quote(java.io.File.separator));
 
       return PhotoPath.PATH_TO_DATABASE + folders[folders.length - 3]
           + PhotoPath.PATH_TO_DOWNLOAD_PHOTO +
