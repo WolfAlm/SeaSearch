@@ -56,15 +56,15 @@ public class InfoStats {
   /**
    * Список с информацией о количестве смешанных сообщений в общительные дни.
    */
-  private List<MessagesPerDay> messagesAllOfDay;
+  private List<MessagesPerDay> messagesAllOfDay = new ArrayList<>();
   /**
    * Список с информацией о количестве исходящих сообщений в общительные дни.
    */
-  private List<MessagesPerDay> messagesOutgoingOfDay;
+  private List<MessagesPerDay> messagesOutgoingOfDay = new ArrayList<>();
   /**
    * Список с информацией о количестве входящих сообщений в общительные дни.
    */
-  private List<MessagesPerDay> messagesIncomingOfDay;
+  private List<MessagesPerDay> messagesIncomingOfDay = new ArrayList<>();
 
   /**
    * Сериализует все три списки сообщений, с информацией о количестве сообщений по дням, в JSON вид
@@ -104,7 +104,7 @@ public class InfoStats {
         }
       }
 
-      dictionaryWords = null;
+      dictionaryWords = new HashMap<>();
     }
 
     try {

@@ -19,6 +19,7 @@ import space.seasearch.spring.entity.UserInfo;
 import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.spring.service.SeaUtils;
 import space.seasearch.spring.service.TGCacheService;
+import space.seasearch.spring.service.UserService;
 import space.seasearch.telegram.stats.profile.ProfileStats;
 import space.seasearch.telegram.user.UserClient;
 
@@ -31,7 +32,7 @@ public class ProfileController {
   @Autowired
   private TGCacheService tgCacheService;
   @Autowired
-  private UserRepository users;
+  private UserService users;
 
   /**
    * Получает необходимые данные для облака слов.
@@ -115,7 +116,10 @@ public class ProfileController {
       throw new NotFoundException();
     }
 
-    stats.parseMessage();
+    String username = userClient.getDialog().getUserProfile().getUser().username;
+    if (!users.updateStats(stats, username, id)) {
+      stats.parseMessage();
+    }
 
     model.addAttribute("profileStats", stats);
     model.addAttribute("me", userClient.getDialog().getUserProfile());
@@ -147,7 +151,7 @@ public class ProfileController {
       modelAndView = new ModelAndView("fragments/stats::success-parse");
       stats.updateInfo();
       modelAndView.addObject("profileStats", stats);
-      saveUserInfo(userClient.getDialog().getUserProfile().getUser().username, id, stats);
+      users.saveUser(userClient.getDialog().getUserProfile().getUser().username, id, stats);
     } else {
       modelAndView = new ModelAndView("fragments/stats::proccess-parse");
       modelAndView.addObject("countMessage", stats.getCountAllMessage());
@@ -155,22 +159,5 @@ public class ProfileController {
     }
 
     return modelAndView;
-  }
-
-  private void saveUserInfo(String username, Long chatId, ProfileStats stats) {
-    Optional<UserInfo> userOpt = users.findById(username);
-    UserInfo user;
-    if (userOpt.isPresent()) {
-      user = userOpt.get();
-    } else {
-      user = new UserInfo();
-      user.setUsername(username);
-      user.setStats(new HashMap<>());
-    }
-
-    user.setLastActivity(LocalDateTime.now());
-    Map<Long, ChatStatsRaw> chatStats = user.getStats();
-    chatStats.put(chatId, new ChatStatsRaw(stats.getInfoStats()));
-    users.save(user);
   }
 }

@@ -53,13 +53,15 @@ public class ProfileStats {
       // Сообщения по дням.
       Map<LocalDate, Integer> messagesOfDay = message.getMessagesOfDay();
 
-      infoStats.setMessagesAllOfDay(createMessagesPerDay(messagesOfDay));
-      infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
-      infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
+      if (!messagesOfDay.isEmpty()) {
+        infoStats.setMessagesAllOfDay(createMessagesPerDay(messagesOfDay));
+        infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
+        infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
+      }
 
       // Среднее количество сообщений в день.
       LongSummaryStatistics statistics =
-          messagesOfDay.values().parallelStream().mapToLong(a -> a).summaryStatistics();
+              messagesOfDay.values().parallelStream().mapToLong(a -> a).summaryStatistics();
 
       infoStats.setCountAverageMessage((int) statistics.getAverage());
       // Количество общительных дней
@@ -70,16 +72,18 @@ public class ProfileStats {
 
       // Первое сообщение.
       TdApi.Message firstMessage = message.getLastMessage();
-      infoStats.setDateFirstMessage(dateFormat.format(new Date(firstMessage.date * 1000L)));
+      if (firstMessage != null) {
+        infoStats.setDateFirstMessage(dateFormat.format(new Date(firstMessage.date * 1000L)));
+      }
 
       // Слова
       infoStats.setDictionaryWords(infoStats.getDictionaryWords().entrySet()
-          .stream()
-          .sorted(Entry.<String, Integer>comparingByValue().reversed())
-          .collect(Collectors.toMap(
-              Map.Entry::getKey,
-              Map.Entry::getValue,
-              (oldValue, newValue) -> oldValue, LinkedHashMap::new)));
+              .stream()
+              .sorted(Entry.<String, Integer>comparingByValue().reversed())
+              .collect(Collectors.toMap(
+                      Map.Entry::getKey,
+                      Map.Entry::getValue,
+                      (oldValue, newValue) -> oldValue, LinkedHashMap::new)));
 
       // Очистим все данные.
       message.setMessagesOfDay(new HashMap<>());
