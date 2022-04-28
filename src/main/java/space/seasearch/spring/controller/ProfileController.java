@@ -1,5 +1,8 @@
 package space.seasearch.spring.controller;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import space.seasearch.spring.entity.ChatStatsRaw;
+import space.seasearch.spring.entity.UserInfo;
+import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.spring.service.SeaUtils;
 import space.seasearch.spring.service.TGCacheService;
 import space.seasearch.telegram.stats.profile.ProfileStats;
@@ -24,6 +30,8 @@ public class ProfileController {
   private String cookieTokenKey;
   @Autowired
   private TGCacheService tgCacheService;
+  @Autowired
+  private UserRepository users;
 
   /**
    * Получает необходимые данные для облака слов.
@@ -139,6 +147,7 @@ public class ProfileController {
       modelAndView = new ModelAndView("fragments/stats::success-parse");
       stats.updateInfo();
       modelAndView.addObject("profileStats", stats);
+      saveUserInfo(userClient.getDialog().getUserProfile().getUser().username, id, stats);
     } else {
       modelAndView = new ModelAndView("fragments/stats::proccess-parse");
       modelAndView.addObject("countMessage", stats.getCountAllMessage());
@@ -146,5 +155,22 @@ public class ProfileController {
     }
 
     return modelAndView;
+  }
+
+  private void saveUserInfo(String username, Long chatId, ProfileStats stats) {
+    Optional<UserInfo> userOpt = users.findById(username);
+    UserInfo user;
+    if (userOpt.isPresent()) {
+      user = userOpt.get();
+    } else {
+      user = new UserInfo();
+      user.setUsername(username);
+      user.setStats(new HashMap<>());
+    }
+
+    user.setLastActivity(LocalDateTime.now());
+    Map<Long, ChatStatsRaw> chatStats = user.getStats();
+    chatStats.put(chatId, new ChatStatsRaw(stats.getInfoStats()));
+    users.save(user);
   }
 }

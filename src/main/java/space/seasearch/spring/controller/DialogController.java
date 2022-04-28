@@ -63,7 +63,7 @@ public class DialogController {
    */
   @PostMapping("/dialogs")
   public String getSortDialogs(@ModelAttribute("search") String search, Model model,
-      HttpServletRequest request) {
+                               HttpServletRequest request) {
     Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
 
     if (!tgCacheService.tokenIsPresent(token)) {
