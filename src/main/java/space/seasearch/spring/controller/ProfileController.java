@@ -88,7 +88,9 @@ public class ProfileController {
 
     ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
 
-    stats.restartMessage();
+    String username = userClient.getDialog().getUserProfile().getUser().username;
+    int newestSavedMessageDate = users.updateStats(stats, username, id);
+    stats.restartMessage(newestSavedMessageDate);
 
     return "{}";
   }
@@ -117,9 +119,8 @@ public class ProfileController {
     }
 
     String username = userClient.getDialog().getUserProfile().getUser().username;
-    if (!users.updateStats(stats, username, id)) {
-      stats.parseMessage();
-    }
+    int newestSavedMessageDate = users.updateStats(stats, username, id);
+    stats.parseMessage(newestSavedMessageDate);
 
     model.addAttribute("profileStats", stats);
     model.addAttribute("me", userClient.getDialog().getUserProfile());

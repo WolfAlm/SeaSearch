@@ -107,15 +107,15 @@ public class ProfileStats {
   /**
    * Запускает процесс парсинга сообщений.
    */
-  public void parseMessage() {
+  public void parseMessage(int newestSavedMessageDate) {
     message.setStats(infoStats);
-    message.startParseMessage();
+    message.startParseMessage(newestSavedMessageDate);
   }
 
-  public void restartMessage() {
+  public void restartMessage(int newestSavedMessageDate) {
     infoStats = new InfoStats();
     message.setStartParse(false);
-    parseMessage();
+    message.startParseMessage(newestSavedMessageDate);
   }
 
   /**

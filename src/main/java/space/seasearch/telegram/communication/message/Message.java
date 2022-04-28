@@ -57,6 +57,11 @@ public class Message {
   @Getter
   private TdApi.Message lastMessage;
 
+  private int newestSavedMessageDate;
+
+  @Getter
+  private int newestMessageDate;
+
   public Message(TelegramClient client, Long idChat) {
     this.idChat = idChat;
     this.client = client;
@@ -65,11 +70,13 @@ public class Message {
   /**
    * Запускает процесс получения сообщений для диалога, если не был запущен.
    */
-  public void startParseMessage() {
+  public void startParseMessage(int newestSavedMessageDate) {
     if (!startParse) {
-      startParse = true;
-      haveFullMessages = false;
-      lastMessage = null;
+      this.startParse = true;
+      this.haveFullMessages = false;
+      this.lastMessage = null;
+      this.newestSavedMessageDate = newestSavedMessageDate;
+      this.newestMessageDate = 0;
       parseMessage();
     }
   }
@@ -208,8 +215,13 @@ public class Message {
           haveFullMessages = true;
         } else {
           lastMessage = messagesId[messagesId.length - 1];
+          newestMessageDate = Math.max(newestMessageDate, messagesId[0].date);
 
           for (var message : messagesId) {
+            if (message.date <= newestSavedMessageDate) {
+              haveFullMessages = true;
+              break;
+            }
             checkTypeMessage(message);
           }
         }

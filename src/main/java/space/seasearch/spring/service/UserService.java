@@ -23,22 +23,25 @@ public class UserService {
     public void saveUser(String username, Long chatId, ProfileStats stats) {
         UserInfo user = getUser(username);
         Map<Long, ChatStatsRaw> chatStats = user.getStats();
-        chatStats.put(chatId, new ChatStatsRaw(stats.getInfoStats()));
+        ChatStatsRaw chat = new ChatStatsRaw(stats.getInfoStats());
+        chat.setNewestMessageDate(stats.getMessage().getNewestMessageDate());
+        chatStats.put(chatId, chat);
         users.save(user);
     }
 
-    public boolean updateStats(ProfileStats stats, String username, Long chatId) {
+    public int updateStats(ProfileStats stats, String username, Long chatId) {
         UserInfo user = getUser(username);
         if (!user.getStats().containsKey(chatId)) {
-            return false;
+            return 0;
         }
 
+        ChatStatsRaw chat = user.getStats().get(chatId);
         InfoStats infoStats = stats.getInfoStats();
-        fillStats(user.getStats().get(chatId), infoStats);
+        fillStats(chat, infoStats);
 
         stats.updateInfo();
         stats.getMessage().setHaveFullMessages(true);
-        return true;
+        return chat.getNewestMessageDate();
     }
 
     private UserInfo getUser(String username) {

@@ -17,6 +17,7 @@ public class ChatStatsRaw {
     private List<MessagesPerDay> incomingMessages;
     private List<MessagesPerDay> outgoingMessages;
     private String oldestMessageDate;
+    private int newestMessageDate;
 
     public ChatStatsRaw() {
         incoming = new ChatObjects();
