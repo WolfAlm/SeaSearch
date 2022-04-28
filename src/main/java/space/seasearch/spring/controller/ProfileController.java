@@ -20,6 +20,7 @@ import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.spring.service.SeaUtils;
 import space.seasearch.spring.service.TGCacheService;
 import space.seasearch.spring.service.UserService;
+import space.seasearch.telegram.stats.info.InfoStats;
 import space.seasearch.telegram.stats.profile.ProfileStats;
 import space.seasearch.telegram.user.UserClient;
 
@@ -88,6 +89,7 @@ public class ProfileController {
 
     ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
 
+    stats.setInfoStats(new InfoStats());
     String username = userClient.getDialog().getUserProfile().getUser().username;
     int newestSavedMessageDate = users.updateStats(stats, username, id);
     stats.restartMessage(newestSavedMessageDate);

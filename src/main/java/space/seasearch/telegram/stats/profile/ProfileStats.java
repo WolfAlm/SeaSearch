@@ -53,11 +53,9 @@ public class ProfileStats {
       // Сообщения по дням.
       Map<LocalDate, Integer> messagesOfDay = message.getMessagesOfDay();
 
-      if (!messagesOfDay.isEmpty()) {
-        infoStats.setMessagesAllOfDay(createMessagesPerDay(messagesOfDay));
-        infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
-        infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
-      }
+      infoStats.setMessagesAllOfDay(createMessagesPerDay(messagesOfDay));
+      infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
+      infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
 
       // Среднее количество сообщений в день.
       LongSummaryStatistics statistics =
@@ -72,7 +70,7 @@ public class ProfileStats {
 
       // Первое сообщение.
       TdApi.Message firstMessage = message.getLastMessage();
-      if (firstMessage != null) {
+      if (firstMessage != null && infoStats.getDateFirstMessage() == null) {
         infoStats.setDateFirstMessage(dateFormat.format(new Date(firstMessage.date * 1000L)));
       }
 
@@ -113,9 +111,9 @@ public class ProfileStats {
   }
 
   public void restartMessage(int newestSavedMessageDate) {
-    infoStats = new InfoStats();
     message.setStartParse(false);
-    message.startParseMessage(newestSavedMessageDate);
+    infoStats.setUpdated(false);
+    parseMessage(newestSavedMessageDate);
   }
 
   /**

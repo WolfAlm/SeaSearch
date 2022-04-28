@@ -6,11 +6,15 @@ import space.seasearch.spring.entity.ChatObjects;
 import space.seasearch.spring.entity.ChatStatsRaw;
 import space.seasearch.spring.entity.UserInfo;
 import space.seasearch.spring.repository.UserRepository;
+import space.seasearch.telegram.communication.message.Message;
 import space.seasearch.telegram.stats.info.InfoStats;
+import space.seasearch.telegram.stats.info.MessagesPerDay;
 import space.seasearch.telegram.stats.profile.ProfileStats;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,11 +40,9 @@ public class UserService {
         }
 
         ChatStatsRaw chat = user.getStats().get(chatId);
-        InfoStats infoStats = stats.getInfoStats();
-        fillStats(chat, infoStats);
+        fillStats(chat, stats.getInfoStats());
+        fillMessages(chat, stats.getMessage());
 
-        stats.updateInfo();
-        stats.getMessage().setHaveFullMessages(true);
         return chat.getNewestMessageDate();
     }
 
@@ -81,8 +83,6 @@ public class UserService {
         to.setOutgoingVideo(outgoing.getVideo());
         to.setOutgoingWord(outgoing.getWord());
 
-        to.setMessagesIncomingOfDay(from.getIncomingMessages());
-        to.setMessagesOutgoingOfDay(from.getOutgoingMessages());
         to.setIncomingMessage(from.getIncomingMessages().stream()
                 .reduce(0, (a, b) -> a + b.getValue(), Integer::sum));
         to.setOutgoingMessage(from.getOutgoingMessages().stream()
@@ -90,5 +90,23 @@ public class UserService {
 
         to.setDictionaryWords(from.getWordCount());
         to.setDateFirstMessage(from.getOldestMessageDate());
+    }
+
+    private void fillMessages(ChatStatsRaw from, Message to) {
+        to.setMessagesIncomingOfDay(listToMap(from.getIncomingMessages()));
+        to.setMessagesOutgoingOfDay(listToMap(from.getOutgoingMessages()));
+        var allMessages = listToMap(from.getIncomingMessages());
+        for (var message : from.getOutgoingMessages()) {
+            allMessages.merge(message.getDate(), message.getValue(), Integer::sum);
+        }
+        to.setMessagesOfDay(allMessages);
+    }
+
+    private Map<LocalDate, Integer> listToMap(List<MessagesPerDay> list) {
+        Map<LocalDate, Integer> map = new HashMap<>();
+        for (var message : list) {
+            map.put(message.getDate(), message.getValue());
+        }
+        return map;
     }
 }
