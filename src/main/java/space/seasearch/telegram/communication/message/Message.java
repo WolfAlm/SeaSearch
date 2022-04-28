@@ -150,7 +150,7 @@ public class Message {
         for (String word : words) {
           // Проверяем, что слово содержит только буквы.
           if (!UtilMessage.deleteNotLetters(word).equals("")) {
-            countWords += word.length();
+            countWords += 1;
 
             wordsDictionary.merge(word.toLowerCase(), 1, Integer::sum);
           }
