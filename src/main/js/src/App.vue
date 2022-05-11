@@ -1,81 +1,92 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="/src/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <body>
+    <div class="centered box" v-if="!show_information">
+        <span style="vertical-align:middle" class="title_grad">SeaSearch</span>
+        <div class="row login-box" style="padding-bottom: 10px">
+            <div style="flex: 40%; width: 50%">
+                <img style="width: 90%; margin-left: 10%" src="./assets/logo.ico" alt="SeaSearch Logo"/>
+
+            </div>
+            <div style="flex:60%; width: 50%">
+                <h2>Log in:</h2>
+                <div class="login-box">
+                    <div class="user-box">
+                        <input type="text" name="phoneNumber" required="" placeholder=""/>
+                        <label></label>
+                        <label>Phone number</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row login-box user-box" style="padding: 0">
+            <div style="flex: 40%;">
+                <button @click="this.show_information = true;" style="margin-left: 20%; width: 80%; height: 100%">
+                    <label>Information</label>
+                </button>
+            </div>
+            <div style="flex:60%;">
+                <button style="width: 80%; height: 100%">
+                    <label>Send code</label>
+                </button>
+            </div>
+        </div>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <div class="centered box login-box user-box" style="width: 60%; height: 70%" v-else >
+        <InfoText/>
+        <button @click="this.show_information = false;" style="width: 30%; margin-top: 20px">
+            <label>Return</label>
+        </button>
+    </div>
+    </body>
 </template>
 
+<script>
+
+import InfoText from "./components/InfoText.vue";
+
+export default {
+    name: "Login",
+    components: {InfoText},
+    data() {
+        return {
+            show_information: false
+        };
+    },
+    computed: {
+        loggedIn() {
+            return this.$store.state.auth.status.loggedIn;
+        },
+    },
+    created() {
+        // if (this.loggedIn) {
+        //   this.$router.push("/profile");
+        // }
+    },
+    methods: {
+        handleLogin(user) {
+            this.loading = true;
+            this.$store.dispatch("auth/login", user).then(
+                () => {
+                    this.$router.push("/profile");
+                },
+                (error) => {
+                    this.loading = false;
+                    this.message =
+                        (error.response &&
+                            error.response.data &&
+                            error.response.data.message) ||
+                        error.message ||
+                        error.toString();
+                }
+            );
+        },
+    },
+};
+</script>
+
 <style>
-@import '/src/assets/base.css';
+@import './assets/styles/base.css';
+@import './assets/styles/login.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
-}
-
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-}
 </style>
