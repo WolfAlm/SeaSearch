@@ -9,6 +9,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.Filter;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -19,7 +21,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
+        httpSecurity.csrf().disable()
+
+                .sessionManagement().sessionCreationPolicy(STATELESS)
+                .and()
+
                 .authorizeRequests()
                 .antMatchers("/", "/**").permitAll();
         httpSecurity.addFilterBefore(filterExceptionHandler, UsernamePasswordAuthenticationFilter.class);

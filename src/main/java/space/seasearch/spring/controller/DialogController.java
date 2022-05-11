@@ -5,9 +5,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,7 +38,7 @@ public class DialogController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
 
     if (userClient.getCurrentStateConstructor() == AuthorizationStateReady.CONSTRUCTOR) {
       Dialog dialog = userClient.getDialog();
@@ -73,7 +71,7 @@ public class DialogController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
     Dialog dialog = userClient.getDialog();
     dialog.setSearch(search);
     model.addAttribute("dialog", dialog);

@@ -1,21 +1,13 @@
 package space.seasearch.spring.controller;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import space.seasearch.spring.entity.ChatStatsRaw;
-import space.seasearch.spring.entity.UserInfo;
-import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.spring.service.SeaUtils;
 import space.seasearch.spring.service.TGCacheService;
 import space.seasearch.spring.service.UserService;
@@ -48,7 +40,7 @@ public class ProfileController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
 
     return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonWords();
   }
@@ -68,7 +60,7 @@ public class ProfileController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
     return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonMessages();
   }
 
@@ -80,7 +72,7 @@ public class ProfileController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
 
     ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
 
@@ -107,7 +99,7 @@ public class ProfileController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
 
     ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
 
@@ -140,7 +132,7 @@ public class ProfileController {
 //      return "redirect:/login";
 //    }
 
-    UserClient userClient = tgCacheService.findUserClientByToken(token.get());
+    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
 
     ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
     ModelAndView modelAndView;
