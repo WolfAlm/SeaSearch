@@ -17,7 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final List<String> jwtWhitelist = List.of("/login/phone");
+    private final List<String> jwtWhitelist = List.of("/login/phone", "/");
+    private final List<String> resources = List.of("/static", "/templates", "/img", "/js", "/style", "/fragments");
     private final JwtService jwtService;
 
     private final static String BEARER = "Bearer ";
@@ -35,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return jwtWhitelist.contains(request.getServletPath());
+        return jwtWhitelist.contains(request.getServletPath()) || resources.stream().anyMatch(it -> request.getServletPath().startsWith(it));
     }
 
     private void verifyTokenValidity(HttpServletRequest request) throws TokenException, JwtException {
