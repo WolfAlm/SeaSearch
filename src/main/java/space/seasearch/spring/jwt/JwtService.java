@@ -7,9 +7,12 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Service
@@ -55,6 +58,15 @@ public class JwtService {
         } catch (JWTVerificationException exception) {
             throw new JwtException(exception.getMessage());
         }
+    }
+
+    public void insertJwtTokens(String phoneNumber, HttpServletResponse response, HttpServletRequest request) {
+        var accessToken = createAccessToken(phoneNumber, request);
+        var refreshToken = createRefreshToken(phoneNumber, request);
+        var cookie = new Cookie("refresh_token", refreshToken);
+        cookie.setHttpOnly(true);
+        response.setHeader("access_token", accessToken);
+        response.addCookie(cookie);
     }
 
 

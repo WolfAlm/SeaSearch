@@ -1,13 +1,11 @@
 package space.seasearch.spring.service;
 
 import it.tdlight.common.TelegramClient;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.stereotype.Service;
 import space.seasearch.telegram.user.TelegramClientFactory;
 import space.seasearch.telegram.user.UserClient;
@@ -15,30 +13,25 @@ import space.seasearch.telegram.user.UserClient;
 @Service
 public class TGCacheService {
 
-    private final Map<String, UserClient> cachedClients = new HashMap<>();
+    private final Map<String, UserClient> userPhoneToClient = new ConcurrentHashMap<>();
 
     public boolean tokenExist(String token) {
-        return cachedClients.containsKey(token);
+        return userPhoneToClient.containsKey(token);
     }
 
-    public UserClient findUserClientByToken(String token) {
-        return cachedClients.getOrDefault(token, null);
+    public UserClient findUserClientByPhone(String token) {
+        return userPhoneToClient.getOrDefault(token, null);
     }
 
     public void deleteUserByToken(String token) {
-        cachedClients.remove(token);
+        userPhoneToClient.remove(token);
     }
 
-    public String generateToken() {
-        String token = "" + UUID.randomUUID();
-        return Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public UserClient registerToken(String token, CountDownLatch countDownLatch) {
-        if (!cachedClients.containsKey(token)) {
-            cachedClients.put(token, createUserClient(token, countDownLatch));
+    public UserClient getOrCreateClient(String phoneNumber) throws InterruptedException {
+        if (!userPhoneToClient.containsKey(phoneNumber)) {
+            userPhoneToClient.put(phoneNumber, createUserClient());
         }
-        return findUserClientByToken(token);
+        return findUserClientByPhone(phoneNumber);
     }
 
     public boolean tokenIsPresent(Optional<String> token) {
@@ -46,12 +39,13 @@ public class TGCacheService {
     }
 
 
-    private UserClient createUserClient(String token, CountDownLatch countDownLatch) {
+    private UserClient createUserClient() throws InterruptedException {
         TelegramClient telegramClient = TelegramClientFactory.createClient();
 
-        UserClient userClient = new UserClient(telegramClient, token);
-        userClient.setCountDownLatch(countDownLatch);
+        UserClient userClient = new UserClient(telegramClient);
+        var latch = userClient.startRequest();
         userClient.start();
+        latch.await();
         return userClient;
     }
 

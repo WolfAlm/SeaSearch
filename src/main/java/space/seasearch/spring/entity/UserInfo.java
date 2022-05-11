@@ -14,4 +14,5 @@ public class UserInfo {
     private String username;
     private LocalDateTime lastActivity;
     private Map<Long, ChatStatsRaw> stats;
+    private String tokenPath;
 }
