@@ -3,21 +3,21 @@ package space.seasearch.spring.controller;
 import it.tdlight.jni.TdApi.AuthorizationStateReady;
 import it.tdlight.jni.TdApi.AuthorizationStateWaitCode;
 import it.tdlight.jni.TdApi.AuthorizationStateWaitPassword;
-import it.tdlight.jni.TdApi.AuthorizationStateWaitPhoneNumber;
 
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
+import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.entity.TelegramInputDto;
 import space.seasearch.spring.jwt.JwtService;
 import space.seasearch.spring.service.SeaUtils;
@@ -107,6 +107,15 @@ public class AuthenticationController {
     ) throws Exception {
         var user = telegramAuthService.processNewUser(telegramInputDto.getPhoneNumber());
         jwtService.insertJwtTokens(user.getUsername(), response, request);
+    }
+
+    @PostMapping("/login/code")
+    public ResponseEntity verifyLoginWithCode(
+            @RequestBody @Valid TelegramInputDto telegramInputDto
+    ) throws Exception {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        SeaSearchUser user = (SeaSearchUser) auth.getPrincipal();
+        return telegramAuthService.authenticateUserWithCode(user.getUsername(), telegramInputDto.getCode());
     }
 
 //    /**
@@ -203,4 +212,4 @@ public class AuthenticationController {
 //
 //        return "login";
 //    }
-    }
+}

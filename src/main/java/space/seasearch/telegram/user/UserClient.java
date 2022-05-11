@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 import space.seasearch.telegram.communication.chat.Dialog;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
@@ -30,7 +31,7 @@ public class UserClient {
         dialog = new Dialog(client);
     }
 
-    public String getCurrentError(){
+    public String getCurrentError() {
         var error = this.currentError;
         this.currentError = "";
         return error;
@@ -172,12 +173,16 @@ public class UserClient {
 
     }
 
+    @Getter
+    private int status;
+
     private class AuthorizationRequestHandler implements ResultHandler {
 
         @Override
         public void onResult(TdApi.Object object) {
             if (object.getConstructor() == Error.CONSTRUCTOR) {
                 currentError = ((Error) object).message;
+                status = ((Error) object).code;
                 countDownLatch.countDown();
                 System.err.println("AuthorizationRequestHandler:" + object);
             }
@@ -190,5 +195,13 @@ public class UserClient {
 
     public boolean hasError() {
         return !currentError.isEmpty();
+    }
+
+    public boolean isWaitingCode() {
+        return this.currentStateConstructor == TdApi.AuthorizationStateWaitCode.CONSTRUCTOR;
+    }
+
+    public boolean is2FA(){
+        return Objects.equals(this.currentError, "SESSION_PASSWORD_NEEDED");
     }
 }

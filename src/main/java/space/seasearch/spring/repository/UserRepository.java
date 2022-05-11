@@ -1,7 +1,7 @@
 package space.seasearch.spring.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import space.seasearch.spring.entity.UserInfo;
+import space.seasearch.spring.entity.SeaSearchUser;
 
-public interface UserRepository extends MongoRepository<UserInfo, String> {
+public interface UserRepository extends MongoRepository<SeaSearchUser, String> {
 }
