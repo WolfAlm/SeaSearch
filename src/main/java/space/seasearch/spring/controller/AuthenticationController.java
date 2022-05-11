@@ -98,7 +98,7 @@ public class AuthenticationController {
         return "login";
     }
 
-    @PostMapping("/login/phone/{phoneNumber}")
+    @PostMapping("/login/phone")
     public String loginWithPhoneNumber(
             @RequestBody @Valid TelegramInputDto telegramInputDto
     ) {
