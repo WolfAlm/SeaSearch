@@ -72,6 +72,10 @@ dependencies {
     // Misc
     runtimeOnly("org.springframework.boot:spring-boot-devtools:$springBootVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+
+    // jwt
+    implementation("com.auth0:java-jwt:3.19.2")
+
 }
 
 // Build config...

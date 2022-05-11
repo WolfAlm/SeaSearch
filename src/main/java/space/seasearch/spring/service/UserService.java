@@ -1,5 +1,6 @@
 package space.seasearch.spring.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import space.seasearch.spring.entity.ChatObjects;
@@ -19,9 +20,9 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
     private UserRepository users;
 
     public void saveUser(String username, Long chatId, ProfileStats stats) {

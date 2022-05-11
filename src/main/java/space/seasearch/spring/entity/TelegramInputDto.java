@@ -5,7 +5,7 @@ import javax.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class InputTelegram {
+public class TelegramInputDto {
 
   @NotBlank(message = "Телефон не может быть пустым!")
   @Pattern(regexp = "^\\d+$", message = "Телефон должен состоять только из чисел!")

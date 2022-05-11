@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import space.seasearch.spring.entity.ChatStatsRaw;
 import space.seasearch.spring.entity.UserInfo;
@@ -24,15 +23,14 @@ import space.seasearch.telegram.stats.info.InfoStats;
 import space.seasearch.telegram.stats.profile.ProfileStats;
 import space.seasearch.telegram.user.UserClient;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/profile")
 public class ProfileController {
 
   @Value("${TOKEN_NAME}")
   private String cookieTokenKey;
-  @Autowired
   private TGCacheService tgCacheService;
-  @Autowired
   private UserService users;
 
   /**
@@ -42,7 +40,6 @@ public class ProfileController {
    * @param request Запрос пользователя.
    * @return
    */
-  @ResponseBody
   @GetMapping("/{id}/cloudWords")
   public String getCloudWords(@PathVariable("id") long id, HttpServletRequest request) {
     Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
@@ -63,7 +60,6 @@ public class ProfileController {
    * @param request Запрос пользователя.
    * @return
    */
-  @ResponseBody
   @GetMapping("/{id}/lineWords")
   public String getLineWords(@PathVariable("id") long id, HttpServletRequest request) {
     Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
@@ -76,7 +72,6 @@ public class ProfileController {
     return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonMessages();
   }
 
-  @ResponseBody
   @GetMapping("/{id}/restart")
   public String restartProfile(@PathVariable("id") long id, HttpServletRequest request) {
     Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
