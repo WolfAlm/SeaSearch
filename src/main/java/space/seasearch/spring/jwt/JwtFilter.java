@@ -3,8 +3,12 @@ package space.seasearch.spring.jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import space.seasearch.spring.repository.UserRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,6 +24,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final List<String> jwtWhitelist = List.of("/login/phone", "/");
     private final List<String> resources = List.of("/static", "/templates", "/img", "/js", "/style", "/fragments");
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     private final static String BEARER = "Bearer ";
 
@@ -29,7 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        verifyTokenValidity(request);
+        var subject = verifyTokenValidity(request);
+        var user = userRepository.findById(subject).orElseThrow();
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, AuthorityUtils.createAuthorityList("ROLE_USER")));
 
         filterChain.doFilter(request, response);
     }
@@ -39,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
         return jwtWhitelist.contains(request.getServletPath()) || resources.stream().anyMatch(it -> request.getServletPath().startsWith(it));
     }
 
-    private void verifyTokenValidity(HttpServletRequest request) throws TokenException, JwtException {
+    private String verifyTokenValidity(HttpServletRequest request) throws TokenException, JwtException {
         if (request.getHeader(HttpHeaders.AUTHORIZATION) == null || request.getHeader(HttpHeaders.AUTHORIZATION).isEmpty()) {
             throw new TokenException("Header does not contain a token");
         }
@@ -52,6 +59,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         var token = authHeader.substring(BEARER.length());
         var decodedToken = jwtService.decodeJwt(token);
-        decodedToken.getToken();
+        return decodedToken.getSubject();
     }
 }

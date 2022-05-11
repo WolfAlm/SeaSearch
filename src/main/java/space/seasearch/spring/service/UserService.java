@@ -1,11 +1,10 @@
 package space.seasearch.spring.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import space.seasearch.spring.entity.ChatObjects;
 import space.seasearch.spring.entity.ChatStatsRaw;
-import space.seasearch.spring.entity.UserInfo;
+import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.telegram.communication.message.Message;
 import space.seasearch.telegram.stats.info.InfoStats;
@@ -26,7 +25,7 @@ public class UserService {
     private UserRepository users;
 
     public void saveUser(String username, Long chatId, ProfileStats stats) {
-        UserInfo user = getUser(username);
+        SeaSearchUser user = getUser(username);
         Map<Long, ChatStatsRaw> chatStats = user.getStats();
         ChatStatsRaw chat = new ChatStatsRaw(stats.getInfoStats());
         chat.setNewestMessageDate(stats.getMessage().getNewestMessageDate());
@@ -35,7 +34,7 @@ public class UserService {
     }
 
     public int updateStats(ProfileStats stats, String username, Long chatId) {
-        UserInfo user = getUser(username);
+        SeaSearchUser user = getUser(username);
         if (!user.getStats().containsKey(chatId)) {
             return 0;
         }
@@ -47,14 +46,14 @@ public class UserService {
         return chat.getNewestMessageDate();
     }
 
-    private UserInfo getUser(String username) {
-        Optional<UserInfo> userOpt = users.findById(username);
-        UserInfo user;
+    private SeaSearchUser getUser(String username) {
+        Optional<SeaSearchUser> userOpt = users.findById(username);
+        SeaSearchUser user;
 
         if (userOpt.isPresent()) {
             user = userOpt.get();
         } else {
-            user = new UserInfo();
+            user = new SeaSearchUser();
             user.setUsername(username);
             user.setStats(new HashMap<>());
         }
