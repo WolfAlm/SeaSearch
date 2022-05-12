@@ -53,7 +53,22 @@ public class TelegramAuthService {
         }
 
         return ResponseEntity.status(tgClient.getStatus()).body(tgClient.getCurrentError());
+    }
 
+    public void authenticateWithPassword(String userPhoneNumber, String password) throws Exception {
+        var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
+
+        if (!tgClient.isWaitingPassword()) {
+            throw new Exception("User not waiting for password");
+        }
+
+        var latch = tgClient.startRequest();
+        tgClient.authPassword(password);
+        latch.await();
+
+        if (tgClient.hasError()) {
+            throw new Exception(tgClient.getCurrentError());
+        }
     }
 
     public SeaSearchUser registerUser(String phoneNumber, String token) throws Exception {
@@ -63,5 +78,18 @@ public class TelegramAuthService {
         user.setUsername(phoneNumber);
         user.setTokenPath(token);
         return userRepository.save(user);
+    }
+
+    public void logoutUser(String userPhone) throws Exception {
+        var tgClient = tgCacheService.getOrCreateClient(userPhone);
+        var latch = tgClient.startRequest();
+        tgClient.exitUser();
+        latch.await();
+
+        if (tgClient.hasError()) {
+            throw new Exception("Logout failed with error message " + tgClient.getCurrentError());
+        }
+
+        userRepository.deleteById(userPhone);
     }
 }
