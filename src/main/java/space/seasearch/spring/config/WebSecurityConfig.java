@@ -30,5 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/**").permitAll();
         httpSecurity.addFilterBefore(filterExceptionHandler, UsernamePasswordAuthenticationFilter.class);
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.cors();
     }
+
+
 }
