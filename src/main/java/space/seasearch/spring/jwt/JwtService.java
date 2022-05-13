@@ -7,12 +7,10 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import space.seasearch.spring.dto.AuthenticationDto;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Service
@@ -30,17 +28,18 @@ public class JwtService {
         return createToken(phoneNumber, expireIn(accessTokenExpiration), request.getRequestURL().toString());
     }
 
-    private String createToken(String phoneNumber, Date expirationDate, String issuer) {
-        return JWT.create()
-                .withSubject(phoneNumber)
-                .withExpiresAt(expirationDate)
-                .withIssuer(issuer)
-                .sign(jwtEncoder);
-    }
-
     public String createRefreshToken(String phoneNumber, HttpServletRequest request) {
         return createToken(phoneNumber, expireIn(refreshTokenExpiration), request.getRequestURL().toString());
     }
+
+    public AuthenticationDto getTokens(String phoneNumber, HttpServletRequest request) {
+        return new AuthenticationDto(createAccessToken(phoneNumber, request), createRefreshToken(phoneNumber, request));
+    }
+
+    public AuthenticationDto updateTokens(String token) {
+        return new AuthenticationDto(updateAccessToken(token), updateRefreshToken(token));
+    }
+
 
     public String updateAccessToken(String token) throws JwtException {
         var decodedToken = decodeJwt(token);
@@ -60,18 +59,17 @@ public class JwtService {
         }
     }
 
-    public void insertJwtTokens(String phoneNumber, HttpServletResponse response, HttpServletRequest request) {
-        var accessToken = createAccessToken(phoneNumber, request);
-        var refreshToken = createRefreshToken(phoneNumber, request);
-        var cookie = new Cookie("refresh_token", refreshToken);
-        cookie.setHttpOnly(true);
-        response.setHeader("access_token", accessToken);
-        response.addCookie(cookie);
-    }
-
 
     private Date expireIn(long expiresIn) {
         return new Date(System.currentTimeMillis() + expiresIn * 1000 * 60);
+    }
+
+    private String createToken(String phoneNumber, Date expirationDate, String issuer) {
+        return JWT.create()
+                .withSubject(phoneNumber)
+                .withExpiresAt(expirationDate)
+                .withIssuer(issuer)
+                .sign(jwtEncoder);
     }
 
 }

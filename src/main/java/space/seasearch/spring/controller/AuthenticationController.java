@@ -1,10 +1,12 @@
 package space.seasearch.spring.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
+import space.seasearch.spring.dto.AuthenticationDto;
 import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.entity.TelegramInputDto;
 import space.seasearch.spring.jwt.JwtService;
@@ -12,7 +14,6 @@ import space.seasearch.spring.service.TelegramAuthDtoValidator;
 import space.seasearch.spring.service.TelegramAuthService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -44,13 +45,14 @@ public class AuthenticationController {
 
 
     @PostMapping("/login/phone")
-    public void loginWithPhoneNumber(
+    public ResponseEntity<AuthenticationDto> loginWithPhoneNumber(
             @RequestBody @Valid TelegramInputDto telegramInputDto,
-            HttpServletRequest request, HttpServletResponse response
+            HttpServletRequest request
     ) throws Exception {
         validator.validatePhoneNumber(telegramInputDto.getPhoneNumber());
         var user = telegramAuthService.processNewUser(telegramInputDto.getPhoneNumber());
-        jwtService.insertJwtTokens(user.getUsername(), response, request);
+        var authDto = jwtService.getTokens(user.getUsername(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authDto);
     }
 
     @PostMapping("/login/code")
