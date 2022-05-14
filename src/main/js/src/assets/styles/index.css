@@ -24,9 +24,9 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     background: #fff;
     border-radius: 30px;
     padding: 20px;
@@ -55,7 +55,6 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 
 
 .form__btn {
@@ -93,7 +92,7 @@
 }
 
 .form__btn-tg {
-    background-color:#25a8d6;
+    background-color: #25a8d6;
 }
 
 
@@ -101,7 +100,6 @@
     margin-right: 10px;
     width: 40px;
 }
-
 
 
 @media screen and (max-device-width: 480px) {
