@@ -20,4 +20,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(e.getStatus()).body(new ErrorDto(e.getStatus(), e.getMessage()));
     }
 
+    @ExceptionHandler(TwoFaException.class)
+    protected ResponseEntity<Object> handle2FaTelegramException(TwoFaException e){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

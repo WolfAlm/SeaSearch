@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.exception.TelegramException;
+import space.seasearch.spring.exception.TwoFaException;
 import space.seasearch.spring.repository.UserRepository;
 
 @Service
@@ -51,7 +52,7 @@ public class TelegramAuthService {
         }
 
         if (tgClient.is2FA()) {
-            throw new TelegramException("REQUIRES 2FA", HttpStatus.UNAUTHORIZED.value());
+            throw new TwoFaException();
         }
     }
 
