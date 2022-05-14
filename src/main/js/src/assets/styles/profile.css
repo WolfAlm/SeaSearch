@@ -1,7 +1,6 @@
 .page {
     width: 100%;
     margin: 0 auto;
-    background-image: url("../img/background.jpg");
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
@@ -13,7 +12,6 @@
     font-size: 40px;
     background: linear-gradient(45deg, #033083 33%, #25a8d6 66%, #25a8d6);
     -webkit-background-clip: text;
-    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 0;
 }

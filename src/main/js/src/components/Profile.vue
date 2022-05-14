@@ -1,10 +1,15 @@
 <template>
-<h1>This is a profile</h1>
+    <router-view>
+        <h1>This is a profile</h1>
+    </router-view>
 </template>
 
 <script>
 export default {
-    name: "ChatList"
+    name: "ChatList",
+    created() {
+        console.log("Hi")
+    },
 }
 </script>
 
