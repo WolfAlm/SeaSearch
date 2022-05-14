@@ -28,9 +28,9 @@ public class AuthenticationController {
 
 
     @RequestMapping("/logout")
-    public void exitProfile() throws Exception {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        SeaSearchUser user = (SeaSearchUser) auth.getPrincipal();
+    public void exitProfile(
+            @AuthenticationPrincipal SeaSearchUser user
+    ) throws Exception {
         telegramAuthService.logoutUser(user.getPhoneNumber());
     }
 

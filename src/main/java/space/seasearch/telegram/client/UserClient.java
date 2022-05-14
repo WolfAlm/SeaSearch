@@ -1,46 +1,24 @@
-package space.seasearch.telegram.user;
+package space.seasearch.telegram.client;
 
 import it.tdlight.common.ResultHandler;
 import it.tdlight.common.TelegramClient;
 import it.tdlight.jni.TdApi;
 import it.tdlight.jni.TdApi.Error;
 import it.tdlight.tdlight.ClientManager;
-import lombok.Data;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
 import space.seasearch.spring.exception.TelegramException;
-import space.seasearch.telegram.communication.chat.Dialog;
 
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-@Data
-public class UserClient {
+public class UserClient extends space.seasearch.telegram.client.TelegramClient {
 
-    @Getter
-    private int currentStateConstructor;
-    private String currentError = "";
-    public CountDownLatch countDownLatch;
-    private TelegramClient client;
-    @Getter
-    private final Dialog dialog;
-    @Getter
-    private String token;
-    private int status;
 
 
     public UserClient(TelegramClient telegramClient) {
-        this.client = telegramClient;
-        dialog = new Dialog(client);
+       super(telegramClient);
     }
 
-    public String getCurrentError() {
-        var error = this.currentError;
-        this.currentError = "";
-        return error;
-    }
+
 
     public void start() {
         client.initialize(
@@ -122,8 +100,8 @@ public class UserClient {
         parameters.useFileDatabase = true;
         parameters.useTestDc = false;
         parameters.useSecretChats = false;
-        parameters.apiId = 3993284;
-        parameters.apiHash = "c4b3283315cbabc63dd8f9150f1ebf4d";
+        parameters.apiId = 12419938;
+        parameters.apiHash = "22033f3a61b16e795125da5d8beb8b92";
         parameters.systemLanguageCode = "ru";
         parameters.deviceModel = "Desktop";
         parameters.applicationVersion = "1.0";
@@ -141,20 +119,6 @@ public class UserClient {
                 // Авторизация пользователя.
                 case TdApi.UpdateAuthorizationState.CONSTRUCTOR:
                     onAuthorizationStateUpdated(((TdApi.UpdateAuthorizationState) object).authorizationState);
-                    break;
-                // Добавляет новые чаты.
-                case TdApi.UpdateNewChat.CONSTRUCTOR:
-                    if (dialog.getParserDialog() != null) {
-                        TdApi.UpdateNewChat updateNewChat = (TdApi.UpdateNewChat) object;
-                        TdApi.Chat chat = updateNewChat.chat;
-                        dialog.getParserDialog().addChat(chat);
-                    }
-                    break;
-                // Получает позиции для этих чатов.
-                case TdApi.UpdateChatPosition.CONSTRUCTOR:
-                    if (dialog.getParserDialog() != null) {
-                        dialog.getParserDialog().addPosition((TdApi.UpdateChatPosition) object);
-                    }
                     break;
             }
         }
@@ -184,12 +148,6 @@ public class UserClient {
 
     public boolean isWaitingCode() {
         return this.currentStateConstructor == TdApi.AuthorizationStateWaitCode.CONSTRUCTOR;
-    }
-
-    public int getStatus() {
-        var tempStatus = status;
-        this.status = 0;
-        return tempStatus;
     }
 
 

@@ -7,8 +7,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
+import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
 import space.seasearch.telegram.user.TelegramClientFactory;
-import space.seasearch.telegram.user.UserClient;
+import space.seasearch.telegram.client.UserClient;
 
 @Service
 public class TGCacheService {
@@ -32,6 +33,13 @@ public class TGCacheService {
             userPhoneToClient.put(phoneNumber, createUserClient());
         }
         return findUserClientByPhone(phoneNumber);
+    }
+
+    public UserClient getClientOrThrow(String phoneNumber) throws SeaSearchClientNotFoundException {
+        if (!userPhoneToClient.containsKey(phoneNumber)) {
+            throw new SeaSearchClientNotFoundException(phoneNumber);
+        }
+        return userPhoneToClient.get(phoneNumber);
     }
 
     public boolean tokenIsPresent(Optional<String> token) {
