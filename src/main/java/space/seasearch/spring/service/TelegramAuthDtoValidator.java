@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 @Service
 public class TelegramAuthDtoValidator {
 
-    private final static Pattern PHONE_PATTERN = Pattern.compile("^\\d{10}$");
+    private final static Pattern PHONE_PATTERN = Pattern.compile("^\\d+$");
     private final static String PHONE_FIELD = "phone number";
     private final static String CODE_FIELD = "code field";
     private final static String PASSWORD_FIELD = "password field";

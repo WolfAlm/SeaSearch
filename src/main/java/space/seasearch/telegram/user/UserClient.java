@@ -7,6 +7,9 @@ import it.tdlight.jni.TdApi.Error;
 import it.tdlight.tdlight.ClientManager;
 import lombok.Data;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
+import space.seasearch.spring.exception.TelegramException;
 import space.seasearch.telegram.communication.chat.Dialog;
 
 import java.util.Objects;
@@ -70,7 +73,7 @@ public class UserClient {
         client.send(new TdApi.LogOut(), new AuthorizationRequestHandler());
     }
 
-    private void onAuthorizationStateUpdated(TdApi.AuthorizationState authorizationState) throws InterruptedException {
+    private void onAuthorizationStateUpdated(TdApi.AuthorizationState authorizationState) {
         switch (authorizationState.getConstructor()) {
             //нужно отправить парамтер бибилотеки
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR -> {
@@ -104,9 +107,7 @@ public class UserClient {
             }
             case TdApi.AuthorizationStateClosed.CONSTRUCTOR -> {
                 client = ClientManager.create();
-                var latch = this.startRequest();
                 start();
-                latch.await();
             }
             default -> System.err.println("Unsupported authorization state: " + authorizationState);
         }
@@ -119,7 +120,7 @@ public class UserClient {
         parameters.useMessageDatabase = true;
         parameters.useChatInfoDatabase = false;
         parameters.useFileDatabase = true;
-        parameters.useTestDc = true;
+        parameters.useTestDc = false;
         parameters.useSecretChats = false;
         parameters.apiId = 3993284;
         parameters.apiHash = "c4b3283315cbabc63dd8f9150f1ebf4d";
@@ -139,11 +140,7 @@ public class UserClient {
             switch (object.getConstructor()) {
                 // Авторизация пользователя.
                 case TdApi.UpdateAuthorizationState.CONSTRUCTOR:
-                    try {
-                        onAuthorizationStateUpdated(((TdApi.UpdateAuthorizationState) object).authorizationState);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    onAuthorizationStateUpdated(((TdApi.UpdateAuthorizationState) object).authorizationState);
                     break;
                 // Добавляет новые чаты.
                 case TdApi.UpdateNewChat.CONSTRUCTOR:
@@ -201,6 +198,10 @@ public class UserClient {
     }
 
     public boolean is2FA() {
-        return Objects.equals(this.currentError, "SESSION_PASSWORD_NEEDED");
+        return this.currentStateConstructor == TdApi.AuthorizationStateWaitPassword.CONSTRUCTOR;
+    }
+
+    public TelegramException getException() {
+        return new TelegramException(this.getCurrentError(), this.getStatus());
     }
 }
