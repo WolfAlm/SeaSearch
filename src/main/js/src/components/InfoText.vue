@@ -1,6 +1,6 @@
 <template>
-    <span style="vertical-align:middle; font-size: 70px" class="title_grad">SeaSearch</span>
-    <div class="text">
+    <label style="vertical-align:middle; font-size: 70px" class="title_grad">SeaSearch</label>
+    <div class="text" style="margin: 0 auto;">
         <p class="text__text">
             Note that we use your Telegram account for authentication purposes only. By registering, you automatically
             give us permission to view your messages, thus allowing the app to analyze them. All requested data is

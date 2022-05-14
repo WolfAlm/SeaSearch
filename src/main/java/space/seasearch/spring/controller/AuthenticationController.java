@@ -16,6 +16,7 @@ import space.seasearch.spring.service.TelegramAuthService;
 
 import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin
 @RestController
 @RequestScope
 @RequiredArgsConstructor

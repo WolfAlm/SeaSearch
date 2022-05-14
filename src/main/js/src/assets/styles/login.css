@@ -47,7 +47,7 @@ button {
 .login-box .user-box input {
     width: 100%;
     padding: 10px 0;
-    font-size: 16px;
+    font-size: 25px;
     color: #033083;
     margin-bottom: 30px;
     border: none;
@@ -60,8 +60,8 @@ button {
     position: absolute;
     top: 0;
     left: 0;
-    padding: 10px 0;
-    font-size: 16px;
+    padding: 40px 20px;
+    font-size: 22px;
     color: #033083;
     pointer-events: none;
     transition: .5s;
@@ -69,11 +69,12 @@ button {
 
 .login-box .user-box input:focus ~ label,
 .login-box .user-box input:valid ~ label {
-    top: -20px;
+    top: -30px;
     left: 0;
     color: #033083;
-    font-size: 12px;
+    font-size: 16px;
 }
+
 
 .login-box button {
     position: relative;
@@ -81,7 +82,7 @@ button {
     padding: 10px 20px;
     color: #ffffff;
     background: #033083;
-    font-size: 16px;
+    font-size: 20px;
     text-decoration: none;
     text-transform: uppercase;
     overflow: hidden;
@@ -90,7 +91,14 @@ button {
     border-radius: 10px;
 }
 
-.login-box button:hover {
+.login-box button:disabled,
+button[disabled] {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+}
+
+.login-box button:hover:enabled  {
     background: linear-gradient(45deg, #25a8d6 33%, #0078ac 66%, #033083);
     color: #fff;
     border-radius: 15px;
@@ -111,14 +119,14 @@ button {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-left: 20px;
-    margin-bottom: 20%;
+    margin-bottom: 0;
 }
 
 
 .box {
     min-width: 500px;
     width: 40%;
-    height: 55%;
+    height: 50%;
     justify-content: center;
     background-color: white;
     border-radius: 40px;
@@ -148,8 +156,8 @@ h2 {
 
 .error-feedback {
     color: red;
-    font-max-size: 2px;
-    font-size: x-small;
+    font-size: large;
+    overflow-x: clip;
 }
 
 .rounded_button {

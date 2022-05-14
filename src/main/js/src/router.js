@@ -1,16 +1,24 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import {createWebHistory, createRouter} from "vue-router";
 import App from "./App.vue"
 
-Vue.use(Router)
+const routes = [
+    {
+        path: '/',
+        name: 'login',
+        component: App,
+        meta: {title: 'SeaSearch: Login'}
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: App,
+        meta: {title: 'SeaSearch: Profile'}
+    },
+]
 
-export default new Router({
-    routes: [
-        {
-            path: '/',
-            name: 'login',
-            component: App,
-            meta: { title: 'SeaSearch: Login' } // <- I would to use this one
-        },
-    ]
-})
+const router = createRouter({
+    history: createWebHistory(),
+    routes,
+});
+
+export default router;
