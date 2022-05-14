@@ -13,7 +13,7 @@ import space.seasearch.spring.service.TGCacheService;
 import space.seasearch.spring.service.UserService;
 import space.seasearch.telegram.stats.info.InfoStats;
 import space.seasearch.telegram.stats.profile.ProfileStats;
-import space.seasearch.telegram.user.UserClient;
+import space.seasearch.telegram.client.UserClient;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,13 +36,15 @@ public class ProfileController {
   public String getCloudWords(@PathVariable("id") long id, HttpServletRequest request) {
     Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
 
-    if (!tgCacheService.tokenIsPresent(token)) {
-      return "redirect:/login";
-    }
+//    if (!tgCacheService.tokenIsPresent(token)) {
+//      return "redirect:/login";
+//    }
+//
+//    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
+//
+//    return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonWords();
 
-    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
-
-    return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonWords();
+    return null;
   }
 
   /**
@@ -59,9 +61,10 @@ public class ProfileController {
     if (!tgCacheService.tokenIsPresent(token)) {
       return "redirect:/login";
     }
-
-    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
-    return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonMessages();
+//
+//    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
+//    return userClient.getDialog().getProfileStats().get(id).getInfoStats().jsonMessages();
+    return null;
   }
 
   @GetMapping("/{id}/restart")
@@ -72,14 +75,14 @@ public class ProfileController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
-
-    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
-
-    stats.setInfoStats(new InfoStats());
-    String username = userClient.getDialog().getUserProfile().getUser().username;
-    int newestSavedMessageDate = users.updateStats(stats, username, id);
-    stats.restartMessage(newestSavedMessageDate);
+//    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
+//
+//    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
+//
+//    stats.setInfoStats(new InfoStats());
+//    String username = userClient.getDialog().getUserProfile().getUser().username;
+//    int newestSavedMessageDate = users.updateStats(stats, username, id);
+//    stats.restartMessage(newestSavedMessageDate);
 
     return "{}";
   }
@@ -99,20 +102,20 @@ public class ProfileController {
       return "redirect:/login";
     }
 
-    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
-
-    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
-
-    if (stats == null) {
-      throw new NotFoundException();
-    }
-
-    String username = userClient.getDialog().getUserProfile().getUser().username;
-    int newestSavedMessageDate = users.updateStats(stats, username, id);
-    stats.parseMessage(newestSavedMessageDate);
-
-    model.addAttribute("profileStats", stats);
-    model.addAttribute("me", userClient.getDialog().getUserProfile());
+//    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
+//
+//    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
+//
+//    if (stats == null) {
+//      throw new NotFoundException();
+//    }
+//
+//    String username = userClient.getDialog().getUserProfile().getUser().username;
+//    int newestSavedMessageDate = users.updateStats(stats, username, id);
+//    stats.parseMessage(newestSavedMessageDate);
+//
+//    model.addAttribute("profileStats", stats);
+//    model.addAttribute("me", userClient.getDialog().getUserProfile());
 
     return "profile";
   }
@@ -131,22 +134,22 @@ public class ProfileController {
 //    if (!tgCacheService.tokenIsPresent(token)) {
 //      return "redirect:/login";
 //    }
-
-    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
-
-    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
-    ModelAndView modelAndView;
-
-    if (stats.isHaveAllMessage()) {
-      modelAndView = new ModelAndView("fragments/stats::success-parse");
-      stats.updateInfo();
-      modelAndView.addObject("profileStats", stats);
-      users.saveUser(userClient.getDialog().getUserProfile().getUser().username, id, stats);
-    } else {
-      modelAndView = new ModelAndView("fragments/stats::proccess-parse");
-      modelAndView.addObject("countMessage", stats.getCountAllMessage());
-      modelAndView.addObject("date", stats.getDateLastMessage());
-    }
+//
+//    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
+//
+//    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);
+    ModelAndView modelAndView = null;
+//
+//    if (stats.isHaveAllMessage()) {
+//      modelAndView = new ModelAndView("fragments/stats::success-parse");
+//      stats.updateInfo();
+//      modelAndView.addObject("profileStats", stats);
+//      users.saveUser(userClient.getDialog().getUserProfile().getUser().username, id, stats);
+//    } else {
+//      modelAndView = new ModelAndView("fragments/stats::proccess-parse");
+//      modelAndView.addObject("countMessage", stats.getCountAllMessage());
+//      modelAndView.addObject("date", stats.getDateLastMessage());
+//    }
 
     return modelAndView;
   }

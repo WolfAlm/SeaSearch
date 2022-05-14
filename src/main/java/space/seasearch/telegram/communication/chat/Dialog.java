@@ -137,7 +137,6 @@ public class Dialog {
       switch (chat.type.getConstructor()) {
         case ChatTypePrivate.CONSTRUCTOR:
           countDownLatch = new CountDownLatch(1);
-
           UserStats userStats = new UserStats(client, new Message(client, chatId),
               countDownLatch);
           userStats.parseUser(((ChatTypePrivate) chat.type).userId);
