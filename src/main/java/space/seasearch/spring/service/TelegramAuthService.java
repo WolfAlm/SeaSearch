@@ -1,13 +1,11 @@
 package space.seasearch.spring.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.exception.TelegramException;
 import space.seasearch.spring.repository.UserRepository;
-import space.seasearch.telegram.user.UserClient;
-
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -18,39 +16,42 @@ public class TelegramAuthService {
 
     public SeaSearchUser processNewUser(String phoneNumber) throws Exception {
         var tgClient = tgCacheService.getOrCreateClient(phoneNumber);
-        var user = registerUser(phoneNumber, tgClient.getToken());
-        user.setTokenPath(tgClient.getToken());
 
 
         if (!tgClient.isWaitingForPhoneNumber()) {
-            throw new TelegramException("User with pone numebr " + phoneNumber + " is already in status " + tgClient.getCurrentStateConstructor());
+            throw new TelegramException("User with pone numebr " + phoneNumber + " is already in status " + tgClient.getCurrentStateConstructor(),
+                    HttpStatus.BAD_REQUEST.value());
         }
-
-//        CompletableFuture.runAsync(()->{
-//            tgClient.authPhoneNumber(phoneNumber);
-//        }).join();
 
         var latch = tgClient.startRequest();
         tgClient.authPhoneNumber(phoneNumber);
         latch.await();
 
-        return user;
+        if (tgClient.hasError()) {
+            throw tgClient.getException();
+        }
+
+        return registerUser(phoneNumber, tgClient.getToken());
     }
 
     public void authenticateUserWithCode(String userPhoneNumber, String code) throws Exception {
         var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
 
         if (!tgClient.isWaitingCode()) {
-            throw new TelegramException("User not waiting for code");
+            throw new TelegramException("User not waiting for code", HttpStatus.FORBIDDEN.value());
         }
 
         var latch = tgClient.startRequest();
         tgClient.authCode(code);
         latch.await();
 
-        if (tgClient.hasError() || tgClient.is2FA()) {
+        if (tgClient.hasError()) {
             userRepository.deleteById(userPhoneNumber);
-            throw new TelegramException(tgClient.getCurrentError());
+            throw tgClient.getException();
+        }
+
+        if (tgClient.is2FA()) {
+            throw new TelegramException("REQUIRES 2FA", HttpStatus.UNAUTHORIZED.value());
         }
     }
 
@@ -58,7 +59,7 @@ public class TelegramAuthService {
         var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
 
         if (!tgClient.isWaitingPassword()) {
-            throw new TelegramException("User not waiting for password");
+            throw new TelegramException("User not waiting for password", HttpStatus.FORBIDDEN.value());
         }
 
         var latch = tgClient.startRequest();
@@ -66,7 +67,7 @@ public class TelegramAuthService {
         latch.await();
 
         if (tgClient.hasError()) {
-            throw new TelegramException(tgClient.getCurrentError());
+            throw tgClient.getException();
         }
     }
 
@@ -86,7 +87,7 @@ public class TelegramAuthService {
         latch.await();
 
         if (tgClient.hasError()) {
-            throw new TelegramException("Logout failed with error message " + tgClient.getCurrentError());
+            throw tgClient.getException();
         }
 
         userRepository.deleteById(userPhone);

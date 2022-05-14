@@ -15,5 +15,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
     }
 
+    @ExceptionHandler(TelegramException.class)
+    protected ResponseEntity<Object> handleTelegramException(TelegramException e) {
+        return ResponseEntity.status(e.getStatus()).body(new ErrorDto(e.getStatus(), e.getMessage()));
+    }
 
 }
