@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import space.seasearch.telegram.photo.PhotoPath;
 
 @Configuration
-public class AdditionalResourceWebConfiguration implements WebMvcConfigurer {
+public class SeaSearchWebResourceConfiguration implements WebMvcConfigurer {
 
   @Override
   public void addResourceHandlers(final ResourceHandlerRegistry registry) {

@@ -1,10 +1,13 @@
 package space.seasearch.spring.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import space.seasearch.spring.entity.SeaSearchUser;
+import space.seasearch.spring.exception.TelegramException;
 import space.seasearch.spring.repository.UserRepository;
+import space.seasearch.telegram.user.UserClient;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -20,46 +23,42 @@ public class TelegramAuthService {
 
 
         if (!tgClient.isWaitingForPhoneNumber()) {
-            throw new Exception("User with pone numebr " + phoneNumber + " is already in status " + tgClient.getCurrentStateConstructor());
+            throw new TelegramException("User with pone numebr " + phoneNumber + " is already in status " + tgClient.getCurrentStateConstructor());
         }
+
+//        CompletableFuture.runAsync(()->{
+//            tgClient.authPhoneNumber(phoneNumber);
+//        }).join();
+
         var latch = tgClient.startRequest();
         tgClient.authPhoneNumber(phoneNumber);
         latch.await();
 
-        if (tgClient.hasError()) {
-            throw new Exception("User Client error " + tgClient.getCurrentError());
-        }
-
         return user;
     }
 
-    public ResponseEntity authenticateUserWithCode(String userPhoneNumber, String code) throws Exception {
+    public void authenticateUserWithCode(String userPhoneNumber, String code) throws Exception {
         var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
 
         if (!tgClient.isWaitingCode()) {
-            throw new Exception("User not waiting for code");
+            throw new TelegramException("User not waiting for code");
         }
 
         var latch = tgClient.startRequest();
         tgClient.authCode(code);
         latch.await();
 
-        if (!tgClient.hasError()) {
-            return ResponseEntity.ok().build();
+        if (tgClient.hasError() || tgClient.is2FA()) {
+            userRepository.deleteById(userPhoneNumber);
+            throw new TelegramException(tgClient.getCurrentError());
         }
-
-        if (tgClient.is2FA()) {
-            return ResponseEntity.status(401).header("X-SeaSearch-2FA", "required").build();
-        }
-
-        return ResponseEntity.status(tgClient.getStatus()).body(tgClient.getCurrentError());
     }
 
     public void authenticateWithPassword(String userPhoneNumber, String password) throws Exception {
         var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
 
         if (!tgClient.isWaitingPassword()) {
-            throw new Exception("User not waiting for password");
+            throw new TelegramException("User not waiting for password");
         }
 
         var latch = tgClient.startRequest();
@@ -67,7 +66,7 @@ public class TelegramAuthService {
         latch.await();
 
         if (tgClient.hasError()) {
-            throw new Exception(tgClient.getCurrentError());
+            throw new TelegramException(tgClient.getCurrentError());
         }
     }
 
@@ -75,7 +74,7 @@ public class TelegramAuthService {
         if (userRepository.findById(phoneNumber).isPresent())
             throw new Exception("user with phone number {} already registered");
         var user = new SeaSearchUser();
-        user.setUsername(phoneNumber);
+        user.setPhoneNumber(phoneNumber);
         user.setTokenPath(token);
         return userRepository.save(user);
     }
@@ -87,7 +86,7 @@ public class TelegramAuthService {
         latch.await();
 
         if (tgClient.hasError()) {
-            throw new Exception("Logout failed with error message " + tgClient.getCurrentError());
+            throw new TelegramException("Logout failed with error message " + tgClient.getCurrentError());
         }
 
         userRepository.deleteById(userPhone);

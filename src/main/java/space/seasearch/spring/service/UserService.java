@@ -54,7 +54,7 @@ public class UserService {
             user = userOpt.get();
         } else {
             user = new SeaSearchUser();
-            user.setUsername(username);
+            user.setPhoneNumber(username);
             user.setStats(new HashMap<>());
         }
         user.setLastActivity(LocalDateTime.now());

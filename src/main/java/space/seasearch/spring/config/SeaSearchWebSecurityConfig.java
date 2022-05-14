@@ -14,7 +14,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SeaSearchWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Filter jwtFilter;
     private final Filter filterExceptionHandler;

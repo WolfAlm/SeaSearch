@@ -14,7 +14,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "space.seasearch.spring.repository")
-public class MongoConfig extends AbstractMongoClientConfiguration {
+public class MongoConfiguration extends AbstractMongoClientConfiguration {
 
     @Value("${mongo.host}")
     private String host;
