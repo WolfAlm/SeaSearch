@@ -51,15 +51,11 @@ class AuthService {
     }
 
     logout() {
+        let res = axios.post(API_URL + '/logout', {}, {headers: authHeader()}).then(
+            response => response.data
+        )
         localStorage.removeItem('user');
-    }
-
-    register(user) {
-        return axios.post(API_URL + 'signup', {
-            phone: user.phone,
-            code: user.code,
-            password: user.password
-        });
+        return res
     }
 }
 

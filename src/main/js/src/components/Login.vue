@@ -142,9 +142,6 @@ export default {
                 this.errorMsg = '';
             }
         },
-        logout() {
-            localStorage.removeItem('user');
-        },
         proceed() {
             console.log("Success!")
             this.$router.replace({path: '/profile'});
