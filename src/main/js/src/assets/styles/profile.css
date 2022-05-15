@@ -12,6 +12,49 @@
 
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #033083;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #25a8d6;
+}
+
+.button {
+    float: right;
+    width: 6vw;
+    height: 2.5vw;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.search_box {
+    width: 18vw;
+    margin-top: 24px;
+    margin-left: 4%;
+    font-size: 20px;
+    float: left;
+    color: #033083;
+    border: none;
+    border-bottom: 1px solid #033083;
+    outline: none;
+    background: transparent;
+}
+
 hr {
     width: calc(100% + 30px);
     color: #033083;
@@ -77,7 +120,7 @@ hr {
     align-items: center;
     border: 0;
     border-radius: 50px;
-    background: linear-gradient(45deg, #033083 33%, #0078ac 66%, #25a8d6);
+    background: #033083;
     color: #ffffff;
     padding: 4px 8px;
     font-size: 22px;
@@ -85,9 +128,6 @@ hr {
     font-family: sans-serif;
 }
 
-.button:hover {
-    background: linear-gradient(45deg, #25a8d6 33%, #0078ac 66%, #033083);
-}
 
 /* info */
 
@@ -101,65 +141,6 @@ hr {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-/* profile */
-
-.profile {
-    display: flex;
-    justify-content: center;
-}
-
-.profile__info {
-    margin-right: 30px;
-    display: flex;
-    flex-direction: column;
-}
-
-.profile__photo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    display: flex;
-    margin: auto;
-}
-
-.profile__info_fio {
-    margin: 10px auto 0;
-    display: flex;
-    flex-wrap: wrap;
-    text-align: center;
-    font-size: 20px;
-}
-
-.profile__info_nickname {
-    margin: 10px auto 0;
-    text-align: center;
-    font-size: 30px;
-}
-
-.stats__list {
-    display: flex;
-    flex-direction: column;
-    align-self: flex-start;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.stats__list-span {
-    font-weight: bold;
-}
-
-.profile__stats {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.button__dwnld {
-    width: 220px;
-    outline: none;
-    font-size: 20px;
-}
 
 /* Табличка */
 
@@ -169,10 +150,10 @@ hr {
 
 .table {
     margin: 10px auto;
+    height: 90%;
     max-width: 800px;
     border-collapse: collapse;
     overflow: hidden;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
 }
 
@@ -276,10 +257,5 @@ hr {
     }
 }
 
-.button {
-    float: right;
-    width: 6vw;
-    height: 2.5vw;
-    margin-left: 20px;
-    margin-top: 20px;
-}
+
+

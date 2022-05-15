@@ -25,11 +25,11 @@ public class AuthenticationController {
     private final JwtService jwtService;
     private final TelegramAuthDtoValidator validator;
 
-    @GetMapping("/token/{phoneNum}")
+    @GetMapping("/token/{phoneNum}") // TODO REMOVE
     public AuthenticationDto getTokens(
             @PathVariable("phoneNum") String phoneNum,
             HttpServletRequest request
-    ) throws Exception {
+    ) {
         return jwtService.getTokens(phoneNum, request);
     }
 

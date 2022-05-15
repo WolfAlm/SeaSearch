@@ -143,7 +143,6 @@ export default {
             }
         },
         proceed() {
-            console.log("Success!")
             this.$router.replace({path: '/profile'});
         }
     },
