@@ -3,11 +3,12 @@ package space.seasearch.spring.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import space.seasearch.spring.dto.ChatDto;
+import space.seasearch.spring.dto.ChatInfoDto;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
 import space.seasearch.spring.mapper.ChatMapper;
+import space.seasearch.spring.mapper.ChatInfoMapper;
 import space.seasearch.telegram.client.ChatClient;
 import space.seasearch.telegram.client.ChatDataClient;
-import space.seasearch.telegram.stats.info.InfoStats;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class TgChatService {
     private final TGCacheService tgCacheService;
     private final UserService userService;
     private final ChatMapper chatMapper;
+    private final ChatInfoMapper profileMappr;
 
     public List<ChatDto> getChats(String userPhone) throws SeaSearchClientNotFoundException, InterruptedException {
         var client = tgCacheService.getClientOrThrow(userPhone);
@@ -49,7 +51,7 @@ public class TgChatService {
                 .toList();
     }
 
-    public InfoStats getChatData(String phoneNumber, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
+    public ChatInfoDto getChatData(String phoneNumber, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
         var client = tgCacheService.getClientOrThrow(phoneNumber);
 
         var chatClient = new ChatClient(client.getClient());
@@ -61,7 +63,10 @@ public class TgChatService {
         var chatDataClient = new ChatDataClient(chatClient.getClient());
 
         chatDataClient.extractData(chatId, chatClient.getChats().get(chatId).lastMessage.id);
-        return chatDataClient.getStats();
+
+        userService.updateStats(chatDataClient.getStats(), phoneNumber, chatId);
+
+        return profileMappr.map(chatDataClient.getStats());
     }
 
     private void loadChatPhotos(ChatClient chatClient) throws InterruptedException {

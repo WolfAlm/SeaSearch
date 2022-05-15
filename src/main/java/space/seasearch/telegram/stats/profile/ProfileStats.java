@@ -36,58 +36,58 @@ public class ProfileStats {
   }
 
   public void updateInfo() {
-    if (!infoStats.isUpdated()) {
-      infoStats.setUpdated(true);
+//    if (!infoStats.isUpdated()) {
+//      infoStats.setUpdated(true);
+////
+////      infoStats.setAllWord(infoStats.getIncomingWords() + infoStats.getOutgoingWord());
+////      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
+////      infoStats.setAllAudio(infoStats.getIncomingAudio() + infoStats.getOutgoingAudio());
+////      infoStats.setAllSticker(infoStats.getIncomingSticker() + infoStats.getOutgoingSticker());
+////      infoStats.setAllPhoto(infoStats.getIncomingPhoto() + infoStats.getOutgoingPhoto());
+////      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
+////      infoStats.setAllVideo(infoStats.getIncomingVideo() + infoStats.getOutgoingVideo());
+////      infoStats.setAllDocument(infoStats.getIncomingDocument() + infoStats.getOutgoingDocument());
+////      infoStats.setAllForward(infoStats.getIncomingForward() + infoStats.getOutgoingForward());
+////      infoStats.setAllMessage(infoStats.getOutgoingMessage() + infoStats.getIncomingMessage());
 //
-//      infoStats.setAllWord(infoStats.getIncomingWords() + infoStats.getOutgoingWord());
-//      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
-//      infoStats.setAllAudio(infoStats.getIncomingAudio() + infoStats.getOutgoingAudio());
-//      infoStats.setAllSticker(infoStats.getIncomingSticker() + infoStats.getOutgoingSticker());
-//      infoStats.setAllPhoto(infoStats.getIncomingPhoto() + infoStats.getOutgoingPhoto());
-//      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
-//      infoStats.setAllVideo(infoStats.getIncomingVideo() + infoStats.getOutgoingVideo());
-//      infoStats.setAllDocument(infoStats.getIncomingDocument() + infoStats.getOutgoingDocument());
-//      infoStats.setAllForward(infoStats.getIncomingForward() + infoStats.getOutgoingForward());
-//      infoStats.setAllMessage(infoStats.getOutgoingMessage() + infoStats.getIncomingMessage());
-
-      // Сообщения по дням.
-      Map<LocalDate, Integer> messagesOfDay = message.getMessagesOfDay();
-
-      infoStats.setMessagesPerActiveDay(createMessagesPerDay(messagesOfDay));
-      infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
-      infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
-
-      // Среднее количество сообщений в день.
-      LongSummaryStatistics statistics =
-              messagesOfDay.values().parallelStream().mapToLong(a -> a).summaryStatistics();
-
-      infoStats.setCountAverageMessage((int) statistics.getAverage());
-      // Количество общительных дней
-      infoStats.setCountDaysMessage((int) statistics.getCount());
-
-      // День с наибольшим количеством дней
-      infoStats.setCountMaxMessage((int) statistics.getMax());
-
-      // Первое сообщение.
-      TdApi.Message firstMessage = message.getLastMessage();
-      if (firstMessage != null && infoStats.getDateFirstMessage() == null) {
-        infoStats.setDateFirstMessage(dateFormat.format(new Date(firstMessage.date * 1000L)));
-      }
-
-      // Слова
-      infoStats.setDictionaryWords(infoStats.getDictionaryWords().entrySet()
-              .stream()
-              .sorted(Entry.<String, Integer>comparingByValue().reversed())
-              .collect(Collectors.toMap(
-                      Map.Entry::getKey,
-                      Map.Entry::getValue,
-                      (oldValue, newValue) -> oldValue, LinkedHashMap::new)));
-
-      // Очистим все данные.
-      message.setMessagesOfDay(new HashMap<>());
-      message.setMessagesIncomingOfDay(new HashMap<>());
-      message.setMessagesOutgoingOfDay(new HashMap<>());
-    }
+//      // Сообщения по дням.
+//      Map<LocalDate, Integer> messagesOfDay = message.getMessagesOfDay();
+//
+//      infoStats.setMessagesPerActiveDay(createMessagesPerDay(messagesOfDay));
+//      infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
+//      infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
+//
+//      // Среднее количество сообщений в день.
+//      LongSummaryStatistics statistics =
+//              messagesOfDay.values().parallelStream().mapToLong(a -> a).summaryStatistics();
+//
+//      infoStats.setCountAverageMessage((int) statistics.getAverage());
+//      // Количество общительных дней
+//      infoStats.setCountDaysMessage((int) statistics.getCount());
+//
+//      // День с наибольшим количеством дней
+//      infoStats.setCountMaxMessage((int) statistics.getMax());
+//
+//      // Первое сообщение.
+//      TdApi.Message firstMessage = message.getLastMessage();
+//      if (firstMessage != null && infoStats.getDateFirstMessage() == null) {
+//        infoStats.setDateFirstMessage(dateFormat.format(new Date(firstMessage.date * 1000L)));
+//      }
+//
+//      // Слова
+//      infoStats.setDictionaryWords(infoStats.getDictionaryWords().entrySet()
+//              .stream()
+//              .sorted(Entry.<String, Integer>comparingByValue().reversed())
+//              .collect(Collectors.toMap(
+//                      Map.Entry::getKey,
+//                      Map.Entry::getValue,
+//                      (oldValue, newValue) -> oldValue, LinkedHashMap::new)));
+//
+//      // Очистим все данные.
+//      message.setMessagesOfDay(new HashMap<>());
+//      message.setMessagesIncomingOfDay(new HashMap<>());
+//      message.setMessagesOutgoingOfDay(new HashMap<>());
+//    }
   }
 
   private List<MessagesPerDay> createMessagesPerDay(Map<LocalDate, Integer> messageDictionary) {
@@ -112,7 +112,7 @@ public class ProfileStats {
 
   public void restartMessage(int newestSavedMessageDate) {
     message.setStartParse(false);
-    infoStats.setUpdated(false);
+//    infoStats.setUpdated(false);
     parseMessage(newestSavedMessageDate);
   }
 

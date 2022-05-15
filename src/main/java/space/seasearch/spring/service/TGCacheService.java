@@ -42,11 +42,6 @@ public class TGCacheService {
         return userPhoneToClient.get(phoneNumber);
     }
 
-    public boolean tokenIsPresent(Optional<String> token) {
-        return token.isPresent() && tokenExist(token.get());
-    }
-
-
     private UserClient createUserClient() throws InterruptedException {
         TelegramClient telegramClient = TelegramClientFactory.createClient();
 

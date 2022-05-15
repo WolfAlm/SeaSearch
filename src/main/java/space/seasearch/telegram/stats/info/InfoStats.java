@@ -16,7 +16,6 @@ import java.util.*;
 public class InfoStats {
 
     private static ObjectMapper mapper = new ObjectMapper();
-    private boolean isUpdated;
 
     private int outgoingMessage = 0;
     private int incomingMessage = 0;

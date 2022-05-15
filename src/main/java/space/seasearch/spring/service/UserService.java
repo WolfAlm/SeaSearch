@@ -21,15 +21,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository users;
+    private final UserRepository userRepository;
 
     public void saveUser(String username, Long chatId, ProfileStats stats) {
         SeaSearchUser user = getUser(username);
-        Map<Long, ChatStatsRaw> chatStats = user.getStats();
+//        Map<Long, ChatStatsRaw> chatStats = user.getStats();
         ChatStatsRaw chat = new ChatStatsRaw(stats.getInfoStats());
         chat.setNewestMessageDate(stats.getMessage().getNewestMessageDate());
-        chatStats.put(chatId, chat);
-        users.save(user);
+//        chatStats.put(chatId, chat);
+        userRepository.save(user);
     }
 
     public void updateGroupIds(String phoneNumber, Set<Long> ids) {
@@ -40,24 +40,22 @@ public class UserService {
         } else {
             user.getChatIds().addAll(ids);
         }
-        users.save(user);
+        userRepository.save(user);
     }
 
-    public int updateStats(ProfileStats stats, String username, Long chatId) {
+    public void updateStats(InfoStats stats, String username, Long chatId) {
         SeaSearchUser user = getUser(username);
-        if (!user.getStats().containsKey(chatId)) {
-            return 0;
+
+        if (user.getChatIdToInfoStats() == null) {
+            user.setChatIdToInfoStats(new HashMap<>());
         }
+        user.getChatIdToInfoStats().put(chatId, stats);
 
-        ChatStatsRaw chat = user.getStats().get(chatId);
-        fillStats(chat, stats.getInfoStats());
-        fillMessages(chat, stats.getMessage());
-
-        return chat.getNewestMessageDate();
+        userRepository.save(user);
     }
 
     private SeaSearchUser getUser(String username) {
-        Optional<SeaSearchUser> userOpt = users.findById(username);
+        Optional<SeaSearchUser> userOpt = userRepository.findById(username);
         SeaSearchUser user;
 
         if (userOpt.isPresent()) {
@@ -65,7 +63,7 @@ public class UserService {
         } else {
             user = new SeaSearchUser();
             user.setPhoneNumber(username);
-            user.setStats(new HashMap<>());
+            user.setChatIdToInfoStats(new HashMap<>());
         }
         user.setLastActivity(LocalDateTime.now());
 
