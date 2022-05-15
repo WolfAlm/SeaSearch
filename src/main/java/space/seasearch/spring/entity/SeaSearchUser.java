@@ -3,6 +3,7 @@ package space.seasearch.spring.entity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import space.seasearch.telegram.stats.info.InfoStats;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,4 +19,5 @@ public class SeaSearchUser{
     private Map<Long, ChatStatsRaw> stats;
     private String tokenPath;
     private Set<Long> chatIds;
+    private InfoStats infoStats;
 }

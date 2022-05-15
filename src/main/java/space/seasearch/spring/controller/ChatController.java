@@ -5,12 +5,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import space.seasearch.spring.dto.ChatDataDto;
 import space.seasearch.spring.dto.ChatDto;
 import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
 import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.spring.service.TgChatService;
+import space.seasearch.telegram.stats.info.InfoStats;
 
 import java.util.List;
 import java.util.Set;
@@ -30,7 +30,7 @@ public class ChatController {
     }
 
     @GetMapping("/chats/{chatId}/info")
-    public ChatDataDto getChatData(
+    public InfoStats getChatData(
             @AuthenticationPrincipal SeaSearchUser user,
             @PathVariable("chatId") Long chatId
     ) throws SeaSearchClientNotFoundException, InterruptedException {

@@ -25,6 +25,7 @@ public class AuthenticationController {
     private final JwtService jwtService;
     private final TelegramAuthDtoValidator validator;
 
+    //FIXME: remove when releasing
     @GetMapping("/token/{phoneNum}")
     public AuthenticationDto getTokens(
             @PathVariable("phoneNum") String phoneNum,

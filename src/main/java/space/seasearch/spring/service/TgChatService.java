@@ -2,11 +2,12 @@ package space.seasearch.spring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import space.seasearch.spring.dto.ChatDataDto;
 import space.seasearch.spring.dto.ChatDto;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
 import space.seasearch.spring.mapper.ChatMapper;
 import space.seasearch.telegram.client.ChatClient;
+import space.seasearch.telegram.client.ChatDataClient;
+import space.seasearch.telegram.stats.info.InfoStats;
 
 import java.util.List;
 
@@ -39,7 +40,6 @@ public class TgChatService {
         });
 
 
-
         loadChatPhotos(chatClient);
 
         return chatClient.getChats()
@@ -49,7 +49,7 @@ public class TgChatService {
                 .toList();
     }
 
-    public ChatDataDto getChatData(String phoneNumber, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
+    public InfoStats getChatData(String phoneNumber, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
         var client = tgCacheService.getClientOrThrow(phoneNumber);
 
         var chatClient = new ChatClient(client.getClient());
@@ -58,7 +58,10 @@ public class TgChatService {
         chatClient.getChat(chatId);
         latch.await();
 
-return null;
+        var chatDataClient = new ChatDataClient(chatClient.getClient());
+
+        chatDataClient.extractData(chatId, chatClient.getChats().get(chatId).lastMessage.id);
+        return chatDataClient.getStats();
     }
 
     private void loadChatPhotos(ChatClient chatClient) throws InterruptedException {

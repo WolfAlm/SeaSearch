@@ -38,22 +38,22 @@ public class ProfileStats {
   public void updateInfo() {
     if (!infoStats.isUpdated()) {
       infoStats.setUpdated(true);
-
-      infoStats.setAllWord(infoStats.getIncomingWords() + infoStats.getOutgoingWord());
-      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
-      infoStats.setAllAudio(infoStats.getIncomingAudio() + infoStats.getOutgoingAudio());
-      infoStats.setAllSticker(infoStats.getIncomingSticker() + infoStats.getOutgoingSticker());
-      infoStats.setAllPhoto(infoStats.getIncomingPhoto() + infoStats.getOutgoingPhoto());
-      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
-      infoStats.setAllVideo(infoStats.getIncomingVideo() + infoStats.getOutgoingVideo());
-      infoStats.setAllDocument(infoStats.getIncomingDocument() + infoStats.getOutgoingDocument());
-      infoStats.setAllForward(infoStats.getIncomingForward() + infoStats.getOutgoingForward());
-      infoStats.setAllMessage(infoStats.getOutgoingMessage() + infoStats.getIncomingMessage());
+//
+//      infoStats.setAllWord(infoStats.getIncomingWords() + infoStats.getOutgoingWord());
+//      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
+//      infoStats.setAllAudio(infoStats.getIncomingAudio() + infoStats.getOutgoingAudio());
+//      infoStats.setAllSticker(infoStats.getIncomingSticker() + infoStats.getOutgoingSticker());
+//      infoStats.setAllPhoto(infoStats.getIncomingPhoto() + infoStats.getOutgoingPhoto());
+//      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
+//      infoStats.setAllVideo(infoStats.getIncomingVideo() + infoStats.getOutgoingVideo());
+//      infoStats.setAllDocument(infoStats.getIncomingDocument() + infoStats.getOutgoingDocument());
+//      infoStats.setAllForward(infoStats.getIncomingForward() + infoStats.getOutgoingForward());
+//      infoStats.setAllMessage(infoStats.getOutgoingMessage() + infoStats.getIncomingMessage());
 
       // Сообщения по дням.
       Map<LocalDate, Integer> messagesOfDay = message.getMessagesOfDay();
 
-      infoStats.setMessagesAllOfDay(createMessagesPerDay(messagesOfDay));
+      infoStats.setMessagesPerActiveDay(createMessagesPerDay(messagesOfDay));
       infoStats.setMessagesIncomingOfDay(createMessagesPerDay(message.getMessagesIncomingOfDay()));
       infoStats.setMessagesOutgoingOfDay(createMessagesPerDay(message.getMessagesOutgoingOfDay()));
 
