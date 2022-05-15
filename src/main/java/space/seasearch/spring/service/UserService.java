@@ -2,6 +2,7 @@ package space.seasearch.spring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import space.seasearch.spring.entity.ChatObjects;
 import space.seasearch.spring.entity.ChatStatsRaw;
 import space.seasearch.spring.entity.SeaSearchUser;
@@ -13,16 +14,14 @@ import space.seasearch.telegram.stats.profile.ProfileStats;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository users;
+    private final UserRepository users;
 
     public void saveUser(String username, Long chatId, ProfileStats stats) {
         SeaSearchUser user = getUser(username);
@@ -30,6 +29,17 @@ public class UserService {
         ChatStatsRaw chat = new ChatStatsRaw(stats.getInfoStats());
         chat.setNewestMessageDate(stats.getMessage().getNewestMessageDate());
         chatStats.put(chatId, chat);
+        users.save(user);
+    }
+
+    public void updateGroupIds(String phoneNumber, Set<Long> ids) {
+        SeaSearchUser user = getUser(phoneNumber);
+        var chats = user.getChatIds();
+        if (chats == null || chats.isEmpty()) {
+            user.setChatIds(ids);
+        } else {
+            user.getChatIds().addAll(ids);
+        }
         users.save(user);
     }
 
@@ -69,9 +79,9 @@ public class UserService {
         to.setIncomingForward(incoming.getForward());
         to.setIncomingPhoto(incoming.getPhoto());
         to.setIncomingSticker(incoming.getSticker());
-        to.setIncomingSymbol(incoming.getSymbol());
+        to.setIncomingSymbols(incoming.getSymbol());
         to.setIncomingVideo(incoming.getVideo());
-        to.setIncomingWord(incoming.getWord());
+        to.setIncomingWords(incoming.getWord());
 
         ChatObjects outgoing = from.getOutgoing();
         to.setOutgoingAudio(outgoing.getAudio());

@@ -14,10 +14,10 @@ import java.util.concurrent.CountDownLatch;
 public class ChatClient extends TelegramClient {
 
     @Getter
-    private List<Long> ids = new ArrayList<>();
+    private final Set<Long> ids = new HashSet<>();
 
     @Getter
-    private Map<Long, TdApi.Chat> chats = new ConcurrentHashMap<>();
+    private final Map<Long, TdApi.Chat> chats = new ConcurrentHashMap<>();
 
     public ChatClient(it.tdlight.common.TelegramClient client) {
         super(client);

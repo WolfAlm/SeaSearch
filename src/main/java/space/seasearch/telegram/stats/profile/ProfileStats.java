@@ -39,12 +39,12 @@ public class ProfileStats {
     if (!infoStats.isUpdated()) {
       infoStats.setUpdated(true);
 
-      infoStats.setAllWord(infoStats.getIncomingWord() + infoStats.getOutgoingWord());
-      infoStats.setAllSymbol(infoStats.getIncomingSymbol() + infoStats.getOutgoingSymbol());
+      infoStats.setAllWord(infoStats.getIncomingWords() + infoStats.getOutgoingWord());
+      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
       infoStats.setAllAudio(infoStats.getIncomingAudio() + infoStats.getOutgoingAudio());
       infoStats.setAllSticker(infoStats.getIncomingSticker() + infoStats.getOutgoingSticker());
       infoStats.setAllPhoto(infoStats.getIncomingPhoto() + infoStats.getOutgoingPhoto());
-      infoStats.setAllSymbol(infoStats.getIncomingSymbol() + infoStats.getOutgoingSymbol());
+      infoStats.setAllSymbol(infoStats.getIncomingSymbols() + infoStats.getOutgoingSymbol());
       infoStats.setAllVideo(infoStats.getIncomingVideo() + infoStats.getOutgoingVideo());
       infoStats.setAllDocument(infoStats.getIncomingDocument() + infoStats.getOutgoingDocument());
       infoStats.setAllForward(infoStats.getIncomingForward() + infoStats.getOutgoingForward());
