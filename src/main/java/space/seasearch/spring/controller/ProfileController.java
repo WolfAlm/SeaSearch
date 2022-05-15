@@ -1,19 +1,22 @@
 package space.seasearch.spring.controller;
 
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import space.seasearch.spring.service.SeaUtils;
 import space.seasearch.spring.service.TGCacheService;
 import space.seasearch.spring.service.UserService;
-import space.seasearch.telegram.stats.info.InfoStats;
-import space.seasearch.telegram.stats.profile.ProfileStats;
 import space.seasearch.telegram.client.UserClient;
+import space.seasearch.telegram.stats.profile.ProfileStats;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -96,12 +99,12 @@ public class ProfileController {
    */
   @GetMapping("/{id}")
   public String getProfile(@PathVariable("id") long id, Model model, HttpServletRequest request) {
-    Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
-
-    if (!tgCacheService.tokenIsPresent(token)) {
-      return "redirect:/login";
-    }
-
+//    Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
+//
+//    if (!tgCacheService.tokenIsPresent(token)) {
+//      return "redirect:/login";
+//    }
+//
 //    UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
 //
 //    ProfileStats stats = userClient.getDialog().getProfileStats().get(id);

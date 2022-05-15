@@ -2,6 +2,7 @@ package space.seasearch.spring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import space.seasearch.spring.dto.ChatDataDto;
 import space.seasearch.spring.dto.ChatDto;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
 import space.seasearch.spring.mapper.ChatMapper;
@@ -14,9 +15,10 @@ import java.util.List;
 public class TgChatService {
 
     private final TGCacheService tgCacheService;
+    private final UserService userService;
     private final ChatMapper chatMapper;
 
-    public List<ChatDto> getDialogues(String userPhone) throws SeaSearchClientNotFoundException, InterruptedException {
+    public List<ChatDto> getChats(String userPhone) throws SeaSearchClientNotFoundException, InterruptedException {
         var client = tgCacheService.getClientOrThrow(userPhone);
 
         var chatClient = new ChatClient(client.getClient());
@@ -24,9 +26,9 @@ public class TgChatService {
         chatClient.getAllChats();
         latch.await();
 
-        var chats = chatClient.getIds();
-
-        chats.forEach(id -> {
+        var chatIds = chatClient.getIds();
+        userService.updateGroupIds(userPhone, chatIds);
+        chatIds.forEach(id -> {
             var latch2 = chatClient.startRequest();
             chatClient.getChat(id);
             try {
@@ -36,6 +38,8 @@ public class TgChatService {
             }
         });
 
+
+
         loadChatPhotos(chatClient);
 
         return chatClient.getChats()
@@ -43,6 +47,18 @@ public class TgChatService {
                 .stream()
                 .map(chatMapper::map)
                 .toList();
+    }
+
+    public ChatDataDto getChatData(String phoneNumber, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
+        var client = tgCacheService.getClientOrThrow(phoneNumber);
+
+        var chatClient = new ChatClient(client.getClient());
+
+        var latch = chatClient.startRequest();
+        chatClient.getChat(chatId);
+        latch.await();
+
+return null;
     }
 
     private void loadChatPhotos(ChatClient chatClient) throws InterruptedException {

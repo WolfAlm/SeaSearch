@@ -34,9 +34,9 @@ public class ChatStatsRaw {
         incoming.setForward(stats.getIncomingForward());
         incoming.setPhoto(stats.getIncomingPhoto());
         incoming.setSticker(stats.getIncomingSticker());
-        incoming.setSymbol(stats.getIncomingSymbol());
+        incoming.setSymbol(stats.getIncomingSymbols());
         incoming.setVideo(stats.getIncomingVideo());
-        incoming.setWord(stats.getIncomingWord());
+        incoming.setWord(stats.getIncomingWords());
 
         outgoing = new ChatObjects();
         outgoing.setAudio(stats.getOutgoingAudio());

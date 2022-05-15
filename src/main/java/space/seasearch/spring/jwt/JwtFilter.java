@@ -22,7 +22,7 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final List<String> jwtWhitelist = List.of("/login/phone", "/");
-    private final List<String> resources = List.of("/static", "/templates", "/img", "/js", "/style", "/fragments");
+    private final List<String> resources = List.of("/static", "/templates", "/img", "/js", "/style", "/fragments", "/token");
     private final JwtService jwtService;
     private final UserRepository userRepository;
 

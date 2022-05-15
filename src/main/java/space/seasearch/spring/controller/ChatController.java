@@ -1,60 +1,48 @@
 package space.seasearch.spring.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import space.seasearch.spring.dto.ChatDataDto;
 import space.seasearch.spring.dto.ChatDto;
 import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
-import space.seasearch.spring.service.TGCacheService;
+import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.spring.service.TgChatService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final TgChatService dialoguesService;
+    private final TgChatService chatService;
+    private final UserRepository userRepository;
 
     @GetMapping("/chats")
     public List<ChatDto> getUserDialogues(
             @AuthenticationPrincipal SeaSearchUser user
     ) throws SeaSearchClientNotFoundException, InterruptedException {
-        return dialoguesService.getDialogues(user.getPhoneNumber());
+        return chatService.getChats(user.getPhoneNumber());
     }
 
-//    /**
-//     * Получает диалоги пользователя и фотки к ними.
-//     *
-//     * @param model Страница, куда нужно будет занести все необходимое.
-//     * @return Страница представления после авторизации.
-//     */
-//    @GetMapping("/dialogs")
-//    public String getDialogs(HttpServletRequest request, Model model) {
-//        Optional<String> token = SeaUtils.readServletCookie(request, cookieTokenKey);
-//
-//        if (!tgCacheService.tokenIsPresent(token)) {
-//            return "redirect:/login";
-//        }
-//
-//        UserClient userClient = tgCacheService.findUserClientByPhone(token.get());
-//
-//        if (userClient.getCurrentStateConstructor() == TdApi.AuthorizationStateReady.CONSTRUCTOR) {
-//            Dialog dialog = userClient.getDialog();
-//            dialog.setSearch("");
-//            dialog.startParse();
-//
-//            // Заносим все необходимое.
-//            model.addAttribute("dialog", dialog);
-//            model.addAttribute("me", dialog.getUserProfile());
-//            return "dialog";
-//        } else {
-//            return "redirect:/login";
-//        }
-//    }
+    @GetMapping("/chats/{chatId}/info")
+    public ChatDataDto getChatData(
+            @AuthenticationPrincipal SeaSearchUser user,
+            @PathVariable("chatId") Long chatId
+    ) throws SeaSearchClientNotFoundException, InterruptedException {
+        return chatService.getChatData(user.getPhoneNumber(), chatId);
+    }
+
+    @GetMapping("/chats/ids")
+    public Set<Long> getChatData(
+            @AuthenticationPrincipal SeaSearchUser user
+    ) throws SeaSearchClientNotFoundException, InterruptedException {
+        return userRepository.findById(user.getPhoneNumber()).get().getChatIds();
+    }
 
 //    /**
 //     * Фильтрует диалоги по набранной строке пользователем.
