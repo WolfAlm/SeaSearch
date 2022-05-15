@@ -1,14 +1,14 @@
 import axios from 'axios';
 import authHeader from "./auth-header";
 
-const API_URL = 'http://localhost:8080/login/';
+const API_URL = 'http://localhost:8080/';
 
 class AuthService {
     needPassword = false;
 
     loginPhone(user) {
         return axios
-            .post(API_URL + 'phone', {
+            .post(API_URL + 'login/phone', {
                 phoneNumber: user.phoneNum.replace(/\D+/g, ''),
                 accessToken: ''
             })
@@ -23,7 +23,7 @@ class AuthService {
 
     loginCode(user) {
         return axios
-            .post(API_URL + 'code', {
+            .post(API_URL + 'login/code', {
                 phoneNumber: user.phoneNum.replace(/\D+/g, ''),
                 code: user.code,
             }, {headers: authHeader()})
@@ -38,7 +38,7 @@ class AuthService {
 
     loginPassword(user) {
         return axios
-            .post(API_URL + 'password', {
+            .post(API_URL + 'login/password', {
                 phoneNumber: user.phoneNum.replace(/\D+/g, ''),
                 code: user.code,
                 password: user.password
@@ -51,15 +51,11 @@ class AuthService {
     }
 
     logout() {
+        let res = axios.post(API_URL + 'logout', {}, {headers: authHeader()}).then(
+            response => response.data
+        )
         localStorage.removeItem('user');
-    }
-
-    register(user) {
-        return axios.post(API_URL + 'signup', {
-            phone: user.phone,
-            code: user.code,
-            password: user.password
-        });
+        return res
     }
 }
 

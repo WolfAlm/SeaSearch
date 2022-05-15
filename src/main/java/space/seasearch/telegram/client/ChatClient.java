@@ -24,7 +24,7 @@ public class ChatClient extends TelegramClient {
     }
 
     public void getAllChats() {
-        client.send(new TdApi.GetChats(new TdApi.ChatListMain(), 20), new ChatHandler());
+        client.send(new TdApi.GetChats(new TdApi.ChatListMain(), 100), new ChatHandler());
     }
 
     public void getChat(Long id) {

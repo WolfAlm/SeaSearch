@@ -30,7 +30,7 @@ public class AuthenticationController {
     public AuthenticationDto getTokens(
             @PathVariable("phoneNum") String phoneNum,
             HttpServletRequest request
-    ) throws Exception {
+    ) {
         return jwtService.getTokens(phoneNum, request);
     }
 
