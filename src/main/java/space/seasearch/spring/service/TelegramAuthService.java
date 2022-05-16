@@ -18,7 +18,6 @@ public class TelegramAuthService {
     public SeaSearchUser processNewUser(String phoneNumber) throws Exception {
         var tgClient = tgCacheService.getOrCreateClient(phoneNumber);
 
-
         if (!tgClient.isWaitingForPhoneNumber()) {
             throw new TelegramException("User with pone numebr " + phoneNumber + " is already in status " + tgClient.getCurrentStateConstructor(),
                     HttpStatus.BAD_REQUEST.value());
@@ -35,8 +34,8 @@ public class TelegramAuthService {
         return registerUser(phoneNumber, tgClient.getToken());
     }
 
-    public void authenticateUserWithCode(String userPhoneNumber, String code) throws Exception {
-        var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
+    public void authenticateUserWithCode(String phoneNumber, String code) throws Exception {
+        var tgClient = tgCacheService.getOrCreateClient(phoneNumber);
 
         if (!tgClient.isWaitingCode()) {
             throw new TelegramException("User not waiting for code", HttpStatus.FORBIDDEN.value());
@@ -47,7 +46,7 @@ public class TelegramAuthService {
         latch.await();
 
         if (tgClient.hasError()) {
-            userRepository.deleteById(userPhoneNumber);
+            userRepository.deleteById(phoneNumber);
             throw tgClient.getException();
         }
 
@@ -56,8 +55,8 @@ public class TelegramAuthService {
         }
     }
 
-    public void authenticateWithPassword(String userPhoneNumber, String password) throws Exception {
-        var tgClient = tgCacheService.getOrCreateClient(userPhoneNumber);
+    public void authenticateWithPassword(String phoneNumber, String password) throws Exception {
+        var tgClient = tgCacheService.getOrCreateClient(phoneNumber);
 
         if (!tgClient.isWaitingPassword()) {
             throw new TelegramException("User not waiting for password", HttpStatus.FORBIDDEN.value());
@@ -82,8 +81,8 @@ public class TelegramAuthService {
         return userRepository.save(user);
     }
 
-    public void logoutUser(String userPhone) throws Exception {
-        var tgClient = tgCacheService.getOrCreateClient(userPhone);
+    public void logoutUser(String phoneNumber) throws Exception {
+        var tgClient = tgCacheService.getClientOrThrow(phoneNumber);
         var latch = tgClient.startRequest();
         tgClient.exitUser();
         latch.await();
@@ -92,6 +91,7 @@ public class TelegramAuthService {
             throw tgClient.getException();
         }
 
-        userRepository.deleteById(userPhone);
+        userRepository.deleteById(phoneNumber);
+        tgCacheService.deleteUserByToken(phoneNumber);
     }
 }

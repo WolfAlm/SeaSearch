@@ -48,6 +48,14 @@ public class ChatController {
         return userRepository.findById(user.getPhoneNumber()).get().getChatIds();
     }
 
+    @GetMapping("/chats/{chatId}/update")
+    public void updateChatData(
+            @AuthenticationPrincipal SeaSearchUser user,
+            @PathVariable("chatId") Long chatId
+    ) throws SeaSearchClientNotFoundException, InterruptedException {
+        chatService.updateChat(user.getPhoneNumber(), chatId);
+    }
+
     @GetMapping("/chats/{chatId}/graph")
     public GraphDto getLineWords(
             @PathVariable("chatId") long chatId,
@@ -55,7 +63,6 @@ public class ChatController {
     ) {
         return chatInfoService.getGraph(user.getPhoneNumber(), chatId);
     }
-
 
     @GetMapping("/chats/{chatId}/wordcloud")
     public List<DictWordDto> getWordDictionary(

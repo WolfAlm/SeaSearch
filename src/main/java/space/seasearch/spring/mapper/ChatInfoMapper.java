@@ -1,5 +1,6 @@
 package space.seasearch.spring.mapper;
 
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
 import space.seasearch.spring.dto.ChatInfoDto;
 import space.seasearch.spring.dto.DailyMessagesDto;
@@ -8,9 +9,16 @@ import space.seasearch.spring.dto.GraphDto;
 import space.seasearch.telegram.stats.info.InfoStats;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static java.util.Collections.reverseOrder;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class ChatInfoMapper {
@@ -47,28 +55,44 @@ public class ChatInfoMapper {
     }
 
     public GraphDto mapToGraphDto(InfoStats stats) {
+        LocalDate minDate = getDateByComparator(stats.getDateToMessageCountOutgoing().keySet(),
+                stats.getDateToMessageCountIncoming().keySet(),
+                LocalDate::compareTo);
+        LocalDate maxDate = getDateByComparator(stats.getDateToMessageCountOutgoing().keySet(),
+                stats.getDateToMessageCountIncoming().keySet(),
+                reverseOrder(LocalDate::compareTo));
         return GraphDto.builder()
-                .incomingDailyMessages(map(stats.getDateToMessageCountIncoming()))
-                .outgoingDailyMessages(map(stats.getDateToMessageCountOutgoing()))
+                .incomingDailyMessages(map(stats.getDateToMessageCountIncoming(), minDate, maxDate))
+                .outgoingDailyMessages(map(stats.getDateToMessageCountOutgoing(), minDate, maxDate))
                 .build();
+    }
+
+    private LocalDate getDateByComparator(Set<LocalDate> s1, Set<LocalDate> s2, Comparator<LocalDate> comparator) {
+        return Stream.concat(s1.stream(), s2.stream()).min(comparator).orElseGet(LocalDate::now);
     }
 
     public List<DictWordDto> mapToDictionary(InfoStats stats) {
         return stats.getDictionaryWords().entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(reverseOrder(Map.Entry.comparingByValue()))
                 .limit(100)
                 .map(entry -> DictWordDto.builder().word(entry.getKey()).count(entry.getValue()).build())
                 .toList();
     }
 
-    private List<DailyMessagesDto> map(Map<LocalDate, Integer> localDateToCount) {
+    private List<DailyMessagesDto> map(Map<LocalDate, Integer> localDateToCount, LocalDate minDate, LocalDate maxDate) {
+        // SPLICE IN THE DATES
+        for (LocalDate travDate = minDate; travDate.isBefore(maxDate); travDate = travDate.plus(1, ChronoUnit.DAYS)) {
+            localDateToCount.putIfAbsent(travDate, 0);
+        }
+
         return localDateToCount.entrySet()
                 .stream()
                 .map(entry -> DailyMessagesDto.builder()
                         .date(entry.getKey())
                         .count(entry.getValue())
                         .build())
+                .sorted(Comparator.comparing(DailyMessagesDto::getDate))
                 .toList();
     }
 

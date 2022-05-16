@@ -5,7 +5,9 @@ import it.tdlight.common.TelegramClient;
 import it.tdlight.jni.TdApi;
 import it.tdlight.jni.TdApi.Error;
 import it.tdlight.tdlight.ClientManager;
+import org.springframework.context.ApplicationEventPublisher;
 import space.seasearch.spring.exception.TelegramException;
+import space.seasearch.spring.listener.NewMessageReceivedEvent;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -13,11 +15,14 @@ import java.util.concurrent.CountDownLatch;
 public class UserClient extends space.seasearch.telegram.client.TelegramClient {
 
 
+    private ApplicationEventPublisher eventPublisher;
+    private String userPhone;
 
-    public UserClient(TelegramClient telegramClient) {
-       super(telegramClient);
+    public UserClient(TelegramClient telegramClient, ApplicationEventPublisher eventPublisher, String userPhone) {
+        super(telegramClient);
+        this.eventPublisher = eventPublisher;
+        this.userPhone = userPhone;
     }
-
 
 
     public void start() {
@@ -109,6 +114,11 @@ public class UserClient extends space.seasearch.telegram.client.TelegramClient {
         return parameters;
     }
 
+    private void onChatUpdate(TdApi.UpdateNewMessage updateNewMessage) {
+        System.out.println("Received message " + updateNewMessage.message.senderId);
+        eventPublisher.publishEvent(new NewMessageReceivedEvent(updateNewMessage, userPhone));
+    }
+
     private class UpdateHandler implements ResultHandler {
         // Тут получается бесконечный мониторинг запросов
 
@@ -120,7 +130,15 @@ public class UserClient extends space.seasearch.telegram.client.TelegramClient {
                 case TdApi.UpdateAuthorizationState.CONSTRUCTOR:
                     onAuthorizationStateUpdated(((TdApi.UpdateAuthorizationState) object).authorizationState);
                     break;
+                case TdApi.UpdateChatMessageTtl.CONSTRUCTOR:
+                    onChatUpdate((TdApi.UpdateNewMessage) object);
+                    break;
             }
+
+        }
+
+        void traceEvent(TdApi.Object object) {
+            System.out.println(object);
         }
 
     }

@@ -25,15 +25,6 @@ public class AuthenticationController {
     private final JwtService jwtService;
     private final TelegramAuthDtoValidator validator;
 
-    //FIXME: remove when releasing
-    @GetMapping("/token/{phoneNum}")
-    public AuthenticationDto getTokens(
-            @PathVariable("phoneNum") String phoneNum,
-            HttpServletRequest request
-    ) {
-        return jwtService.getTokens(phoneNum, request);
-    }
-
     @RequestMapping("/logout")
     public void exitProfile(
             @AuthenticationPrincipal SeaSearchUser user

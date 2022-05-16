@@ -49,9 +49,32 @@ public class UserService {
         if (user.getChatIdToInfoStats() == null) {
             user.setChatIdToInfoStats(new HashMap<>());
         }
-        user.getChatIdToInfoStats().put(chatId, stats);
+        if (user.getChatIdToInfoStats().get(chatId) == null) {
+            user.getChatIdToInfoStats().put(chatId, stats);
+        } else {
+            InfoStats infoStats = user.getChatIdToInfoStats().get(chatId);
+
+        }
 
         userRepository.save(user);
+    }
+
+
+    public InfoStats getInfoStats(String username, Long chatId) {
+        SeaSearchUser user = getUser(username);
+
+        if (user.getChatIdToInfoStats() == null) {
+            user.setChatIdToInfoStats(new HashMap<>());
+        }
+
+        InfoStats stats = user.getChatIdToInfoStats().get(chatId);
+
+        if (stats == null) {
+            stats = new InfoStats();
+        }
+
+        return stats;
+
     }
 
     private SeaSearchUser getUser(String username) {

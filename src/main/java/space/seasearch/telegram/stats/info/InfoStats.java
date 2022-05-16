@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.Setter;
 import space.seasearch.telegram.communication.message.UtilMessage;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
 @Data
+@Getter
 public class InfoStats {
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -47,10 +49,13 @@ public class InfoStats {
     private int countDaysMessage = 0;
 
     private int countMaxMessage = 0;
+
+    @Getter
+    private Instant lastLoadInstant;
     @Setter
     private String dateFirstMessage;
     private int countAverageMessage;
-    private Map<String, Integer> dictionaryWords = new HashMap<>();
+    private Map<String, Integer> dictionaryWords = new TreeMap<>();
     private List<List<Object>> words;
 
     private List<MessagesPerDay> messagesPerActiveDay = new ArrayList<>();
@@ -114,6 +119,10 @@ public class InfoStats {
         } catch (JsonProcessingException a) {
             return "[]";
         }
+    }
+
+    public void updateLastTimeLoaded() {
+        lastLoadInstant = Instant.now();
     }
 
     public void countWrodsAndSymbols(TdApi.Message message) {
