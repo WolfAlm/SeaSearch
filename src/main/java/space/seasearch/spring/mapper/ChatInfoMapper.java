@@ -6,6 +6,7 @@ import space.seasearch.spring.dto.ChatInfoDto;
 import space.seasearch.spring.dto.DailyMessagesDto;
 import space.seasearch.spring.dto.DictWordDto;
 import space.seasearch.spring.dto.GraphDto;
+import space.seasearch.telegram.communication.message.UtilMessage;
 import space.seasearch.telegram.stats.info.InfoStats;
 
 import java.time.LocalDate;
@@ -74,6 +75,7 @@ public class ChatInfoMapper {
     public List<DictWordDto> mapToDictionary(InfoStats stats) {
         return stats.getDictionaryWords().entrySet()
                 .stream()
+                .filter(entry -> !UtilMessage.EXTRA_WORDS.contains(entry.getKey()))
                 .sorted(reverseOrder(Map.Entry.comparingByValue()))
                 .limit(100)
                 .map(entry -> DictWordDto.builder().word(entry.getKey()).count(entry.getValue()).build())
