@@ -52,8 +52,7 @@ public class UserService {
         if (user.getChatIdToInfoStats().get(chatId) == null) {
             user.getChatIdToInfoStats().put(chatId, stats);
         } else {
-            InfoStats infoStats = user.getChatIdToInfoStats().get(chatId);
-
+            user.getChatIdToInfoStats().put(chatId, stats);
         }
 
         userRepository.save(user);

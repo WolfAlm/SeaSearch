@@ -128,7 +128,7 @@ public class InfoStats {
     public void countWrodsAndSymbols(TdApi.Message message) {
         long symbols = ((TdApi.MessageText) message.content).text.text.length();
         String[] words = ((TdApi.MessageText) message.content).text.text
-                .split("[,;:\\[\\]()+.\\\\!?\\s]+");
+                .split("[,;:\\[\\]()+.\\\\!?\\s$]+");
 
         long wordsCount = Arrays.stream(words).filter(word -> !UtilMessage.deleteNotLetters(word).equals("")).count();
 
@@ -161,6 +161,12 @@ public class InfoStats {
             dateToMessageCountIncoming.merge(new Date(message.date * 1000L).toInstant().atZone(
                     ZoneId.of("GMT+3")).toLocalDate(), 1, Integer::sum);
         }
+    }
+
+    private long lastMessageId;
+
+    public void updateLastMessageId(long id) {
+        lastMessageId = id;
     }
 
     public void incrementMessageCount(TdApi.Message message) {

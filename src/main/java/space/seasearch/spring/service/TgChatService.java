@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import space.seasearch.spring.dto.ChatDto;
 import space.seasearch.spring.dto.ChatInfoDto;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
-import space.seasearch.spring.mapper.ChatMapper;
 import space.seasearch.spring.mapper.ChatInfoMapper;
+import space.seasearch.spring.mapper.ChatMapper;
 import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.telegram.client.ChatClient;
 import space.seasearch.telegram.client.ChatDataClient;
@@ -64,6 +64,10 @@ public class TgChatService {
         latch.await();
 
         var chatDataClient = new ChatDataClient(chatClient.getClient());
+        var stats = userService.getInfoStats(phoneNumber, chatId);
+        if (stats != null) {
+            return updateChat(phoneNumber, chatId);
+        }
 
         chatDataClient.extractData(chatId, chatClient.getChats().get(chatId).lastMessage.id);
 
@@ -72,7 +76,7 @@ public class TgChatService {
         return profileMappr.map(chatDataClient.getStats());
     }
 
-    public void updateChat(String phone, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
+    public ChatInfoDto updateChat(String phone, long chatId) throws SeaSearchClientNotFoundException, InterruptedException {
         var client = tgCacheService.getClientOrThrow(phone);
 
         var chatClient = new ChatClient(client.getClient());
@@ -84,10 +88,13 @@ public class TgChatService {
         var chatDataClient = new ChatDataClient(chatClient.getClient());
         var user = userRepository.findById(phone).orElseThrow();
         var info = user.getChatIdToInfoStats().getOrDefault(chatId, new InfoStats());
+        chatDataClient.setStats(info);
 
-        chatDataClient.updateChatData(chatId, info);
+        chatDataClient.updateChatData(chatId);
 
         userService.updateStats(chatDataClient.getStats(), phone, chatId);
+
+        return profileMappr.map(chatDataClient.getStats());
     }
 
     private void loadChatPhotos(ChatClient chatClient) throws InterruptedException {

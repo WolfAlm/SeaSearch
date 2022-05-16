@@ -4,18 +4,23 @@ import it.tdlight.common.TelegramClient;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import space.seasearch.spring.entity.SeaSearchUser;
 import space.seasearch.spring.exception.SeaSearchClientNotFoundException;
+import space.seasearch.spring.repository.UserRepository;
 import space.seasearch.telegram.user.TelegramClientFactory;
 import space.seasearch.telegram.client.UserClient;
 
 @Service
 @RequiredArgsConstructor
 public class TGCacheService {
+
+    private final UserRepository userRepository;
 
     private final Map<String, UserClient> userPhoneToClient = new ConcurrentHashMap<>();
 
@@ -49,7 +54,6 @@ public class TGCacheService {
 
     private UserClient createUserClient(String phoneNumber) throws InterruptedException {
         TelegramClient telegramClient = TelegramClientFactory.createClient();
-
         UserClient userClient = new UserClient(telegramClient, applicationEventPublisher, phoneNumber);
         var latch = userClient.startRequest();
         userClient.start();

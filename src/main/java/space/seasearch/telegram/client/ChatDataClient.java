@@ -37,7 +37,7 @@ public class ChatDataClient extends TelegramClient {
         this.stats.updateLastTimeLoaded();
     }
 
-    public void updateChatData(long chatId, InfoStats infoStats) throws InterruptedException {
+    public void updateChatData(long chatId) throws InterruptedException {
         var lastloaded = stats.getLastLoadInstant();
         while (!isDoneLoading) {
             this.countDownLatch = new CountDownLatch(1);
@@ -71,12 +71,25 @@ public class ChatDataClient extends TelegramClient {
                             isDoneLoading = true;
                             break;
                         }
-                        stats.incrementMessageCount(message);
-                        stats.messageDailyStatUpdate(message);
-                        stats.updateOldestMessagedate(message);
+                        try {
+                            stats.incrementMessageCount(message);
+                            stats.messageDailyStatUpdate(message);
+                            stats.updateOldestMessagedate(message);
+                        } catch (Exception e) {
+                            System.out.println("Message content type is " + message.content.getConstructor() + "and message content is " + message.content);
+                            throw e;
+                        }
 
-                        if (message.content.getConstructor() == TdApi.MessageText.CONSTRUCTOR)
-                            stats.countWrodsAndSymbols(message);
+                        try {
+                            if (message.content.getConstructor() == TdApi.MessageText.CONSTRUCTOR)
+                                stats.countWrodsAndSymbols(message);
+                        } catch (Exception e) {
+                            System.out.println("Message content type is " + message.content.getConstructor() + "and message content is " + message.content);
+                            throw e;
+                        }
+
+                        stats.updateLastMessageId(message.id);
+
                     }
                 }
                 lastMessageId = lastMessageLoaded == null ? 0 : lastMessageLoaded.id;

@@ -1,6 +1,7 @@
 package space.seasearch.telegram.client;
 
 import lombok.Getter;
+import lombok.Setter;
 import space.seasearch.telegram.communication.chat.Dialog;
 
 import java.util.concurrent.CountDownLatch;
@@ -14,7 +15,8 @@ public abstract class TelegramClient {
     @Getter
     protected it.tdlight.common.TelegramClient client;
     @Getter
-    protected String token;
+    @Setter
+    protected String token =null;
     protected int status;
 
     protected TelegramClient(it.tdlight.common.TelegramClient client){

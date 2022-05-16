@@ -72,8 +72,9 @@ public class TelegramAuthService {
     }
 
     public SeaSearchUser registerUser(String phoneNumber, String token) throws Exception {
-        if (userRepository.findById(phoneNumber).isPresent())
-            throw new Exception("user with phone number {} already registered");
+        var userO = userRepository.findById(phoneNumber);
+        if (userO.isPresent())
+            return userO.get();
 
         var user = new SeaSearchUser();
         user.setPhoneNumber(phoneNumber);
@@ -91,7 +92,6 @@ public class TelegramAuthService {
             throw tgClient.getException();
         }
 
-        userRepository.deleteById(phoneNumber);
         tgCacheService.deleteUserByToken(phoneNumber);
     }
 }

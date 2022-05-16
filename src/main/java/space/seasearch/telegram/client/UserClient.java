@@ -97,7 +97,7 @@ public class UserClient extends space.seasearch.telegram.client.TelegramClient {
     }
 
     private TdApi.TdlibParameters getTdlibParameters() {
-        this.token = UUID.randomUUID().toString();
+        this.token = token == null ? UUID.randomUUID().toString() : token;
         TdApi.TdlibParameters parameters = new TdApi.TdlibParameters();
         parameters.databaseDirectory = "database/" + token;
         parameters.useMessageDatabase = true;
