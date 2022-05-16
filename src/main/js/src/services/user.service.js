@@ -13,6 +13,10 @@ class UserService {
         return axios.get(API_URL + url, {headers: authHeader(), responseType: 'blob'})
     }
 
+    getStats(url) {
+        return axios.get(API_URL + url, {headers: authHeader()})
+    }
+
 }
 
 export default new UserService();

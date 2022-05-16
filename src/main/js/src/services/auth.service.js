@@ -13,7 +13,6 @@ class AuthService {
                 accessToken: ''
             })
             .then(response => {
-                console.log(response)
                 if (response.data.accessToken) {
                     localStorage.setItem('user', JSON.stringify(response.data));
                 }
@@ -28,7 +27,6 @@ class AuthService {
                 code: user.code,
             }, {headers: authHeader()})
             .then(response => {
-                console.log(response)
                 if (response.status === 204) {
                     this.needPassword = true
                 }
@@ -44,7 +42,6 @@ class AuthService {
                 password: user.password
             }, {headers: authHeader()})
             .then(response => {
-                console.log(response);
                 this.needPassword = false;
                 return response.data;
             });

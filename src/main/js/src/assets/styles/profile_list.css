@@ -1,6 +1,6 @@
 .box {
     min-width: 500px;
-    width: 80%;
+    width: 40%;
     height: 98%;
     justify-content: center;
     background-color: white;
@@ -11,7 +11,6 @@
     box-shadow: 0 5px 10px rgba(3, 48, 131, 0.98);
 
 }
-
 
 /* width */
 ::-webkit-scrollbar {
@@ -35,6 +34,13 @@
     background: #25a8d6;
 }
 
+.button {
+    float: right;
+    width: 6vw;
+    height: 2.5vw;
+    margin-left: 20px;
+    margin-top: 20px;
+}
 
 .search_box {
     width: 18vw;
@@ -60,7 +66,7 @@ hr {
 }
 
 .profile_title_grad {
-    font-size: 80px;
+    font-size: 60px;
     background: linear-gradient(45deg, #033083 33%, #25a8d6 66%, #25a8d6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -80,10 +86,30 @@ hr {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+.header__right {
+    display: flex;
+    flex-direction: column;
+    margin: auto 40px auto 0;
+}
+
 .logo {
     width: 60px;
     height: 60px;
 }
+
+.header__left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px 0 10px 25px;
+}
+
+.header__photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
 
 .button {
     /*display: inline-flex;*/
@@ -93,12 +119,10 @@ hr {
     border-radius: 50px;
     background: #033083;
     color: #ffffff;
+    padding: 4px 8px;
     font-size: 18px;
     cursor: pointer;
     font-family: sans-serif;
-    float: right;
-    width: 6vw;
-    height: 3vw;
 }
 
 
@@ -122,18 +146,12 @@ hr {
 }
 
 .table {
-    font-size: 16px;
     margin: 10px auto;
     height: 90%;
     max-width: 800px;
     border-collapse: collapse;
     overflow: hidden;
     border-radius: 20px;
-}
-
-.table tr {
-    min-height: 70px;
-    vertical-align: middle;
 }
 
 .column,
@@ -143,11 +161,32 @@ hr {
     color: #fff;
 }
 
-
 .column {
     text-align: left;
 }
 
+.thead .column {
+    background: #25a3dabb;
+}
+
+.tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.tbody .cell {
+    position: relative;
+}
+
+.tbody .cell:hover:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -9999px;
+    bottom: -9999px;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+}
 
 .cloud {
     margin: 0 auto;
@@ -161,48 +200,6 @@ hr {
     height: 500px
 }
 
-
-@media screen and (max-device-width: 480px) {
-    .title {
-        font-size: 30px;
-    }
-
-
-    .header__left {
-        margin-left: 20px;
-    }
-
-    .profile__info_nickname {
-        font-size: 20px;
-    }
-
-    .profile__info {
-        margin-right: 10px;
-    }
-
-    .profile__info_fio {
-        font-size: 15px;
-    }
-
-    .column {
-        text-overflow: ellipsis;
-        max-width: 80px;
-    }
-
-
-    .column,
-    .cell {
-        padding: 5px;
-        font-size: 15px;
-    }
-
-    .info {
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-
-}
 
 
 

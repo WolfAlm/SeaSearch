@@ -39,11 +39,11 @@
         </div>
         <div class="row login-box user-box">
             <div style="flex: 40%;">
-                <button @click="this.showInformation = true;" style="margin-left: 20%; width: 80%; height: 100%">
+                <button @click="this.showInformation = true;" style="margin-left: 10%; width: 80%; height: 100%">
                     <label>Information</label>
                 </button>
             </div>
-            <div style="flex:60%;">
+            <div style="flex:55%;">
                 <button style="width: 80%; height: 100%" @click="handleLogin" :disabled="processing">
                     <label>Submit</label>
                 </button>
@@ -106,6 +106,7 @@ export default {
                 case 0:
                     if (!isValidPhoneNumber(this.user.phoneNum.trim())) {
                         this.errorMsg = "Please enter a valid phone number";
+                        this.processing = false;
                         return;
                     }
                     this.$store.dispatch("auth/loginPhone", this.user).then(
@@ -117,6 +118,7 @@ export default {
                 case 1:
                     if (!this.user.code.match('^\\d{5}$')) {
                         this.errorMsg = "Please enter exactly 5 digits";
+                        this.processing = false;
                         return;
                     }
                     this.$store.dispatch("auth/loginCode", this.user).then(
@@ -140,10 +142,11 @@ export default {
         clearError() {
             if (this.errorMsg !== "" && isValidPhoneNumber(this.user.phoneNum.trim())) {
                 this.errorMsg = '';
+
             }
         },
         proceed() {
-            this.$router.replace({path: '/profile'});
+            this.$router.replace({path: '/profiles'});
         }
     },
 };
