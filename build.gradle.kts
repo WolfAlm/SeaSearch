@@ -15,7 +15,7 @@ plugins {
     //    * The compile tasks for each source set will consider the lombok.config(s) in their up-to-date check.
     id("io.freefair.lombok") version "6.4.2"
 
-    val springBootVersion = "2.4.5"
+    val springBootVersion = "2.6.7"
     id("org.springframework.boot") version springBootVersion
 
     // READ https://github.com/node-gradle/gradle-node-plugin/blob/master/docs/usage.md
@@ -59,7 +59,7 @@ dependencies {
     implementation("org.webjars:jquery:3.6.0")
 
     // Spring (boot)
-    val springBootVersion = "2.4.5"
+    val springBootVersion = "2.6.7"
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     implementation("org.springframework.boot:spring-boot-starter-security:$springBootVersion")
     implementation("org.springframework.boot:spring-boot-starter-validation:$springBootVersion")
@@ -77,7 +77,8 @@ dependencies {
 
     // jwt
     implementation("com.auth0:java-jwt:3.19.2")
-    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5")
+    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.3")
+    implementation("de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.4")
 //    testImplementation("org.testcontainers:mongodb:1.17.1")
 //    testImplementation("org.testcontainers:junit-jupiter:1.17.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
