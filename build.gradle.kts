@@ -77,10 +77,9 @@ dependencies {
 
     // jwt
     implementation("com.auth0:java-jwt:3.19.2")
-    testImplementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.6.3")
     implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.4.5")
-    testImplementation("org.testcontainers:mongodb:1.17.1")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.1")
+//    testImplementation("org.testcontainers:mongodb:1.17.1")
+//    testImplementation("org.testcontainers:junit-jupiter:1.17.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
