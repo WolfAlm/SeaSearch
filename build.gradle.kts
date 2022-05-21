@@ -81,6 +81,8 @@ dependencies {
     implementation("de.flapdoodle.embed:de.flapdoodle.embed.process:3.1.4")
 //    testImplementation("org.testcontainers:mongodb:1.17.1")
 //    testImplementation("org.testcontainers:junit-jupiter:1.17.1")
+    testImplementation("org.junit.platform:junit-platform-runner:1.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
